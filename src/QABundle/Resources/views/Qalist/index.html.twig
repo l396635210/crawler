@@ -1,0 +1,54 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <h1>QAList list</h1>
+    <ul>
+        <li>
+            <a href="{{ path('qa_qalist_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Siteid</th>
+                <th>Status</th>
+                <th>Tagid</th>
+                <th>Data</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for qAList in qALists %}
+            <tr>
+                <td><a href="{{ path('qa_qalist_show', { 'id': qAList.id }) }}">{{ qAList.id }}</a></td>
+                <td>{{ qAList.name }}</td>
+                <td>{{ qAList.siteId }}</td>
+                <td>{% if qAList.status %}Yes{% else %}No{% endif %}</td>
+                <td>{{ qAList.tagId }}</td>
+                <td>{{ qAList.data }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('qa_qalist_show', { 'id': qAList.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('qa_set_grab_rule', { 'id': qAList.id }) }}">设置抓取规则</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('qa_qalist_edit', { 'id': qAList.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('qa_qalist_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Area list</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Pid</th>
+                <th>Parent</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for area in areas %}
+            <tr>
+                <td><a href="{{ path('admin_zh_area_show', { 'id': area.id }) }}">{{ area.id }}</a></td>
+                <td>{{ area.pId }}</td>
+                <td>{{ area.parent }}</td>
+                <td>{{ area.name }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('admin_zh_area_show', { 'id': area.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_zh_area_edit', { 'id': area.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <ul>
+        <li>
+            <a href="{{ path('admin_zh_area_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

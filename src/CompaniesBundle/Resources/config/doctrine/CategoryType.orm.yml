@@ -1,0 +1,28 @@
+CompaniesBundle\Entity\CategoryType:
+    type: entity
+    table: category_type
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        status:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                comment: '1:正常，0:删除'
+                default: '1'
+        orderNum:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '0'
+            column: order_num
+    lifecycleCallbacks: {  }

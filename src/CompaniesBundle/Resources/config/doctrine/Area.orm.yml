@@ -1,0 +1,40 @@
+CompaniesBundle\Entity\Area:
+    type: entity
+    table: area
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        parentId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: parent_id
+        status:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '1'
+        orderNum:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '0'
+            column: order_num
+        isHot:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '0'
+            column: is_hot
+    lifecycleCallbacks: {  }

@@ -1,0 +1,32 @@
+CompaniesBundle\Entity\AreaData:
+    type: entity
+    table: area_data
+    id:
+        areaId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: area_id
+        languageId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: language_id
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+        description:
+            type: string
+            nullable: true
+            length: 500
+            options:
+                fixed: false
+    lifecycleCallbacks: {  }

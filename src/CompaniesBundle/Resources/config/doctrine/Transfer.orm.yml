@@ -1,0 +1,90 @@
+CompaniesBundle\Entity\Transfer:
+    type: entity
+    table: transfer
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        companyId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: company_id
+        fromUserId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: from_user_id
+        toUserId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: to_user_id
+        addUserId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: add_user_id
+        description:
+            type: string
+            nullable: true
+            length: 500
+            options:
+                fixed: false
+        attachment:
+            type: string
+            nullable: true
+            length: 500
+            options:
+                fixed: false
+        addtime:
+            type: datetime
+            nullable: true
+        addIp:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: add_ip
+        status:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                comment: 1：未处理(默认)，2：已处理(通过)，3：已处理(拒绝)，0：删除
+                default: '1'
+        checktime:
+            type: datetime
+            nullable: true
+        checkUserId:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: check_user_id
+        checkIp:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: check_ip
+        checkMemo:
+            type: string
+            nullable: true
+            length: 500
+            options:
+                fixed: false
+            column: check_memo
+    lifecycleCallbacks: {  }

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="dns-prefetch" href="http://localhost/symfony/app_dev.php/admin">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}内部工具{% endblock %}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('bundles/app/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/admin.css') }}">
+    {% block stylesheets %}{% endblock %}
+    <style>
+        .login-background{
+            background-image:
+                    linear-gradient(90deg, transparent 79px, #abced4 179px, #abced4 181px, transparent 181px),
+                    linear-gradient(#eee .1em, transparent .1em)
+                    ,linear-gradient(to left, rgb(142, 158, 171), rgb(238, 242, 243));
+            background-color: rgb(238, 242, 243);
+            background-size: 100% 3em;
+        }
+        .admin-background{
+            background-image:
+                    linear-gradient(90deg, transparent 79px, #abced4 20%, #abced4 181px, transparent 181px),
+                    linear-gradient(#eee .1em, transparent .1em);
+            background-color: #ddd;
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2" />
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+</head>
+<body class={{ app.user ? "admin-background" : "login-background" }} >
+{% block nav %}
+    <nav style="height: 60px; line-height: 60px;" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img style="height: 50px;" src='http://www.oilsns.com/wp-content/uploads/2016/03/OilSNSlogo.png' />
+                <a class="navbar-brand" href="#">内部工具</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ path('information_list') }}">资讯管理</a></li>
+                    <li><a href="{{ path('crawler_spider') }}">招标管理</a></li>
+                    <li class="li-user">
+                        {% if app.user %}
+                            <a href="">{{ app.user.name }} :)&emsp;您好</a>
+                            <a class="log-out" style="background: #222;display: none" href="{{ path('fos_user_security_logout') }}">退出</a>
+                        {% else %}
+                            <a style="background: #222;" href="{{ path('fos_user_security_login') }}">登录</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+<div style="min-height: 600px;" class="row row-offcanvas row-offcanvas-right">
+    {% if(app.user) %}
+        {% block menu %}
+            <div class="col-sm-3 col-md-2 col-sm-offset-1 sidebar-offcanvas" id="sidebar" style="width: 12%;position: fixed">
+                <div class="list-group">
+                    <ul class="list-group-item nav nav-sidebar"><p>招标管理 <button class="btn btn-default btn-xs pull-right">+</button></p>
+                        <li {{ 'crawler' in active ? 'class="active"' }}><a href="{{ path('crawler_spider') }}">--抓取渠道操作 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'tender'  in active ? 'class="active"' }}><a href="{{ path('tenders_list') }}">--招标信息管理 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'emp'     in active ? 'class="active"' }}><a href="{{ path('emp_list') }}">--信息接收对象</a></li>
+                        <li {{ 'app_area'    in active ? 'class="active"' }}><a href="{{ path('area_list') }}">--地区管理 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'country' in active ? 'class="active"' }}><a href="{{ path('country_list') }}">--国家管理</a></li>
+                        <li {{ 'company' in active ? 'class="active"' }}><a href="{{ path('company_list') }}">--渠道管理</a></li>
+                    </ul>
+                </div>
+                <div class="list-group">
+                    <ul class="list-group-item nav nav-sidebar"><p>资讯管理 <button class="btn btn-default btn-xs pull-right">+</button></p>
+                        <li {{ 'category' in active ? 'class="active"' }}><a href="{{ path('category_list') }}">--分类管理 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'app_site' in active ? 'class="active"' }}><a href="{{ path('site_list') }}">--内容源管理 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'information'  in active ? 'class="active"' }}><a href="{{ path('information_list') }}">--资讯信息 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </div>
+                <div class="list-group">
+                    <ul class="list-group-item nav nav-sidebar"><p>问答管理 <button class="btn btn-default btn-xs pull-right">+</button></p>
+                        <li {{ 'qa_site' in active ? 'class="active"' }}><a href="{{ path('qa_site_index') }}">--问答网站 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'qa_tag' in active ? 'class="active"' }}><a href="{{ path('qa_tag_index') }}">--问答标签 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'qa_qalist' in active ? 'class="active"' }}><a href="{{ path('qa_qalist_index') }}">--网站-标签 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </div>
+                <div class="list-group">
+                    <ul class="list-group-item nav nav-sidebar"><p>展会管理 <button class="btn btn-default btn-xs pull-right">+</button></p>
+                        <li {{ 'zh_area' in active ? 'class="active"' }}><a href="{{ path('admin_zh_area_index') }}">--地区管理 <span class="sr-only">(current)</span></a></li>
+                        <li {{ 'zh_channel' in active ? 'class="active"' }}><a href="{{ path('admin_zh_channel_index') }}">--渠道管理 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </div>
+                {% if(app.user.roles[0]=='ROLE_SUPER_ADMIN') %}
+                    <div class="list-group">
+                        <ul class="list-group-item nav nav-sidebar" style="display: block"><p>管理工具 <button class="btn btn-default btn-xs pull-right">+</button></p>
+                            <li {{ 'sa-grab_fields' in active ? 'class="active"' }}><a href="{{ path('sa-grab_fields_index') }}">--抓取字段 <span class="sr-only">(current)</span></a></li>
+                            {# <li {{ 'sa-grab_rule' in active ? 'class="active"' }}><a href="{{ path('sa_grab-rule_index') }}">--抓取规则 <span class="sr-only">(current)</span></a></li> #}
+                            <li {{ 'sa-cache_clear' in active ? 'class="active"' }}><a href="{{ path('sa_cache_clear') }}">--清除缓存 <span class="sr-only">(current)</span></a></li>
+                            <li><a class="btn btn-primary ptn-sm " href="{{ path('mail_send_tender') }}">发送招标邮件</a></li>
+                            <li><a id="grabAll" class="btn btn-primary ptn-sm " >全部抓取</a></li>
+                            <li><a class="btn btn-primary ptn-sm " href="{{ path('titem_push_api') }}">推送到石油链</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endblock %}
+    {% endif %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-8 col-md-offset-0 main" style="width: 75%;float: right; right: 5%">
+        <p class="pull-right visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">导航</button>
+        </p>
+        {% for flash_message in app.session.flashBag.get('notice') %}
+            <div class="flash-notice">
+                <div class="alert alert-success">{{ flash_message }}</div>
+            </div>
+        {% endfor %}
+
+        {% block body %}
+
+        {% endblock %}
+    </div>
+    {% if(app.user) %}
+        <div style="right: 30px; bottom: 100px; position: fixed">
+            <p style="display: none;cursor:pointer;" class="to-top"><i class="icon-circle-arrow-up icon-3x">TOP</i></p>
+        </div>
+    {% else %}
+        <div style="right: 130px; bottom: 105px; position: fixed">
+            <p style="cursor:pointer;"><a style="color: #666" href="{{ path('fos_user_security_login') }}" class="icon-desktop icon-3x">登录</a></p>
+        </div>
+    {% endif %}
+</div>
+
+<footer>
+
+</footer>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script>
+
+    $(document).ready(function () {
+        //$(".nav-sidebar").find("li").show();
+        $('[data-toggle="offcanvas"]').click(function () {
+            $('.row-offcanvas').toggleClass('active');
+            $("#sidebar").attr("style","").show();
+            $(".row-offcanvas").css("height","400px");
+        });
+
+        $(".nav-sidebar").click(function(){
+            $(".nav-sidebar").not(this).find('li').slideUp();
+            $(this).find('li').slideDown();
+            $(this).find('button').text('-');
+        });
+
+        $("li.active").parent().find('li').show();
+        $("li.active").parent().find('button').text('-');
+
+        window.onscroll = function()
+        {
+            if($('body').scrollTop()>=800||$('html').scrollTop()>800){
+                $(".to-top").show();
+            }
+            else{
+                $(".to-top").hide();
+            }
+        };
+
+        $(".to-top").click(function(){
+            $("html").animate({"scrollTop": "0px"},100); //IE,FF
+            $("body").animate({"scrollTop": "0px"},100); //Webkit
+        });
+
+        $(".li-user").hover(function(){
+            $('.log-out').show();
+        },function(){
+            $('.log-out').hide();
+        });
+    });
+</script>
+{% block javascripts %}{% endblock %}
+{% block modal %}{% endblock %}
+</body>
+</html>

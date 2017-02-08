@@ -1,0 +1,49 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <h2 class="sub-header">标签列表</h2>
+    <ul>
+        <li>
+            <a href="{{ path('qa_tag_new') }}">创建新标签</a>
+        </li>
+    </ul>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tag in tags %}
+                <tr>
+                    <td><a href="{{ path('qa_tag_show', { 'id': tag.id }) }}">{{ tag.id }}</a></td>
+                    <td>{{ tag.name }}</td>
+                    <td>{% if tag.status %}Yes{% else %}No{% endif %}</td>
+                    <td>{{ tag.data }}</td>
+                    <td>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="{{ path('qa_tag_show', { 'id': tag.id }) }}">查看</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('qa_tag_edit', { 'id': tag.id }) }}">编辑</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <ul>
+        <li>
+            <a href="{{ path('qa_tag_new') }}">创建新标签</a>
+        </li>
+    </ul>
+{% endblock %}

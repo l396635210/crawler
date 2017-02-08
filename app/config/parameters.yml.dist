@@ -1,0 +1,20 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: crawler
+    database_user: root
+    database_password: Mysql@05
+
+    wp_database_name: wordpress
+
+    oc_database_name: oil-companies
+
+    mailer_transport: smtp
+    mailer_host: smtp.exmail.qq.com
+    mailer_user: {tender@fonchan.com: 石油圈}
+    mailer_password: 1q2w3e4r5T
+    #mailer_host: smtp.163.com
+    #mailer_user: 18701124322@163.com
+    #mailer_password: lz842657913
+    secret: ThisTokenIsNotSoSecretChangeIt

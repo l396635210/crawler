@@ -1,0 +1,32 @@
+CompaniesBundle\Entity\UserCompany:
+    type: entity
+    table: user_company
+    id:
+        userId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: user_id
+        companyId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: company_id
+    fields:
+        isAdmin:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: is_admin
+        remark:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+    lifecycleCallbacks: {  }

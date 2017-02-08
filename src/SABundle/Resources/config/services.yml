@@ -1,0 +1,8 @@
+services:
+#    sa.example:
+#        class: SABundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+    sa.grab_rule:
+        class: SABundle\Controller\GrabRuleController
+        calls:
+            - [ setContainer, [ @service_container ] ]

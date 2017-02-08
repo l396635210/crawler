@@ -1,0 +1,44 @@
+{% extends 'SABundle::base.html.twig' %}
+
+{% block body %}
+    <h1>GrabData</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ grabDatum.id }}</td>
+            </tr>
+            <tr>
+                <th>Data</th>
+                <td>{{ grabDatum.data }}</td>
+            </tr>
+            <tr>
+                <th>Createdate</th>
+                <td>{% if grabDatum.createDate %}{{ grabDatum.createDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Createtime</th>
+                <td>{% if grabDatum.createTime %}{{ grabDatum.createTime|date('H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Grabruleid</th>
+                <td>{{ grabDatum.grabRuleId }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_sa_grab-data_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('admin_sa_grab-data_edit', { 'id': grabDatum.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

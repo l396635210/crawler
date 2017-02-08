@@ -1,0 +1,40 @@
+{% extends 'SABundle::base.html.twig' %}
+
+{% block body %}
+    <h1>GrabRule list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Entity</th>
+                <th>EntityId</th>
+                <th>Urls</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for grabRule in grabRules %}
+            <tr>
+                <td><a href="{{ path('admin_sa_grab-data_show', { 'id': grabRule.id }) }}">{{ grabRule.id }}</a></td>
+                <td>{{ grabRule.data }}</td>
+                <td>{% if grabRule.status %}Yes{% else %}No{% endif %}</td>
+                <td>{{ grabRule.entity }}</td>
+                <td>{{ grabRule.entityId }}</td>
+                <td>{{ grabRule.urls }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('sa_grab-rule_show', { 'id': grabRule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('sa_grab-rule_edit', { 'id': grabRule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,23 @@
+CompaniesBundle\Entity\CompanyCategory:
+    type: entity
+    table: company_category
+    indexes:
+        IDX_COMPANY_ID:
+            columns:
+                - company_id
+    id:
+        companyId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: company_id
+        categoryId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: category_id
+    lifecycleCallbacks: {  }

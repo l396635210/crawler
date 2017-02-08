@@ -1,0 +1,188 @@
+{% extends 'admin.html.twig' %}
+{% block title %}资讯-{{ title }}{% endblock %}
+
+{% block body %}
+    <h2>{{ title }}</h2>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form_row(form.category) }}
+        </div>
+        <div class="col-sm-6">
+            {{ form_row(form.name) }}
+        </div>
+    </div>
+    <div class="sites">
+        {{ form_label(form.urlShow) }}
+        {{ form_errors(form.urlShow) }}
+        {{ form_widget(form.urlShow) }}
+    </div>
+    <div class="form-group">
+        <p id="addUrl" onsubmit="return false;" class="btn btn-info">继续添加网址</p>
+        <p id="delUrl" onsubmit="return false;" class="btn btn-danger">删除最后网址</p>
+        {% if(app.user.roles[0]=='ROLE_SUPER_ADMIN') %}
+            <p id="showCrawlerView" onsubmit="return false;" class="btn btn-default pull-right">添加抓取规则</p>
+            <p id="test" class="btn btn-warning pull-right crawler-rules hide">测试抓取</p>
+        {% endif %}
+    </div>
+    <div class="crawler-rules hide">
+    {{ form_row(form.url) }}
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form_row(form.selectRules) }}
+        </div>
+        <div class="col-sm-6">
+            {{ form_row(form.titleRules) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form_row(form.linkRules) }}
+        </div>
+        <div class="col-sm-6">
+            {{ form_row(form.listPageOtherRules) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form_row(form.contentRules) }}
+        </div>
+        <div class="col-sm-6">
+            {{ form_row(form.detailPageRules) }}
+        </div>
+    </div>
+    {{ form_row(form.sourceRules) }}
+    {{ form_row(form.prefix) }}
+    {#<div class="form-group">
+        <p>选择规则实例：div.news--抓取页面中class为news的div<br>确定页面列表中的标题及内容的范围,class等于news的div</p>
+        <p>标题规则实例：td[class!="details-control"]--抓取选择规则中的文章标题,class不等于details-control的td</p>
+        <p>跳转详情规则实例：a.now-link--抓取选择规则中跳转详情的链接,class等于now-link的a标签</p>
+        <p>详情页内容规则实例：div.text--抓取a标签跳转页面中内容部分规则,class等于text的div</p>
+        <p>可用eq(i)填写规则：select|eq</p>
+    </div>#}
+    </div>
+
+    <div class="form-group">
+        <input type="submit" id="submit" value="{{ action }}" class="btn btn-success pull-right" />
+        <input type="reset"  value="Reset" class="btn btn-default pull-right" />
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+{% block modal %}
+    {% include 'modal/tips.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        (function(){
+            init();
+        })();
+
+        function init(){
+            var sites = $("#site_url").val().split(',');
+            console.log(sites);
+
+            setSiteUrl(sites);
+
+            function setSiteUrl(sites){
+                for(var i=0; i<sites.length; i++){ var site = sites[i];
+                    $(".sites").append(appendUrlHtml());
+                    $("input[name='site[urlShow]']").eq(i).val(site);
+                }
+                $("input[name='site[urlShow]']:last").remove();
+            }
+
+            //getCoutryByAreaAjax($("#company_area"));
+        }
+
+        $("#submit").submit(function(e){
+            if(!checkForm()){
+                e.preventDefault();
+            }
+        });
+
+        $("#showCrawlerView").click(function(){
+            $(".crawler-rules").removeClass('hide');
+        });
+
+        function checkForm(){
+            var bool = true;
+            $("input").each(function(){
+                if($(this).prev().is("label") && $(this).val().length==0){
+                    var $tips = new TipsModal($(this).prev().text());
+                    $tips.setTitle('温馨提示');
+                    $tips.fadeIn();
+                    bool = false;
+                    return false;
+                }
+            });
+            return bool;
+        }
+
+/***********************添加网址和删除网址操作start********************************/
+        $("#addUrl").click(function(){
+            $(this).before(appendUrlHtml());
+        });
+        function appendUrlHtml(){
+            var $html = $("#site_urlShow").prop('outerHTML');
+            return $html;
+        }
+
+        $("#delUrl").click(function(){
+            if($("input[name='site[urlShow]']").length>1)
+                $("input[name='site[urlShow]']:last").remove();
+        });
+/***********************添加网址和删除网址操作end********************************/
+
+/***********************提交start********************************/
+        $("#submit").click(function(){
+            setSites();
+        });
+        //设置网页地址
+        function setSites(){
+            var $sites = [];
+            $("input[name='site[urlShow]']").each(function(){
+                $sites.push($(this).val());
+            });
+            $("input[name='site[url]']").val($sites);
+        }
+/***********************提交操作end********************************/
+
+/****************************测试抓取start**************************/
+        $("#test").click(function(){
+            if(checkForm()){
+                testCrawler();
+            }
+        });
+        function testCrawler(){
+            $.post('{{ path("site_test") }}'
+                , $("form[name='site']").serialize()
+                , function(data){
+                    data = eval("("+data+")");
+                    if(data.data){
+                        testCrawlerCallBack(data.data);
+                    }
+                }
+            );
+        }
+        function testCrawlerCallBack(data){
+            console.log(data);
+            var html = '<table class="table table-striped">';
+            html += '<thead><tr><th>标题</th><th>url</th><th>内容</th><th>来源</th></tr></thead>';
+            for(var o in data){
+                html += '<tbody><tr>';
+                html += '<td>'+data[o].title+'</td>';
+                html += '<td>'+data[o].url+'</td>';
+                html += '<td>'+data[o].content+'</td>';
+                html += '<td>'+data[o].source+'</td>';
+                html += '</tr></tbody>'
+            }
+            html += '</table>';
+            var $tips = new TipsModal(html);
+            $(".modal-body").html(html);
+            $(".modal-body").addClass('modal-table');
+            $tips.fadeIn();
+        }
+/****************************测试抓取end****************************/
+    </script>
+{% endblock %}

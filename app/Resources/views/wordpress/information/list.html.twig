@@ -1,0 +1,55 @@
+{% extends 'admin.html.twig' %}
+{% block title %}资讯-资讯管理{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/pagination.css') }}">
+{% endblock %}
+{% block body %}
+    <h2 class="sub-header">资讯管理</h2>
+    <button class="btn btn-primary push">转&emsp;推</button>
+    <a href="{{ path('send_information_emp') }}" class="btn btn-success pull-right" style="margin-right: 10px;">发送邮件</a>
+    <div class="table-responsive">
+        <div class="count">
+            共{{ pagination.getTotalItemCount }}条
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>渠道</th>
+                <th>标题</th>
+                <th style="width:45%;">内容</th>
+                <th>来源</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in pagination %}
+            <tr class="country_tr">
+                <td>{{ item.id }}</td>
+                <td><a href="#">{{ item.getSite.name }}</a></td>
+                <td><a href="{{ item.location }}" target="_blank">{{ item.title }}</a></td>
+                <td>{{ item.content | slice(0,81) }}...</td>
+                <td>{{ item.source }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    (function(){
+        $(".push").click(function(e){
+            e.preventDefault();
+            $.post("{{ path('post_push_api') }}"
+                , {}
+                , function(data){
+                    console.log(data);
+            });
+        });
+    })()
+</script>
+{% endblock %}

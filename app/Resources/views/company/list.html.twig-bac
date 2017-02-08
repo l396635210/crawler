@@ -1,0 +1,132 @@
+{% extends 'admin.html.twig' %}
+{% block title %}招标-渠道管理{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .lately {
+            -webkit-border-radius: 28px;
+            -moz-border-radius: 28px;
+            border-radius: 28px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/table.css') }}">
+{% endblock %}
+{% block body %}
+    <h2 class="sub-header">渠道管理</h2>
+    <form class="query-form" onsubmit="return false" style="border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <label for="area">选择地区</label>
+        <select class="btn btn-default query" id="data-area">
+            <option value="">全部</option>
+            {% for area in areaList %}
+                <option value="{{ area.id }}">{{ area.areaName }}</option>
+            {% endfor %}
+        </select>
+        <label for="status">抓取类型</label>
+        <select class="btn btn-default query" id="data-status">
+            <option value="" >全部</option>
+            <option value="1" >自动抓取</option>
+            <option value="2" >手动抓取</option>
+        </select>
+        <label class="sr-only-focusable" for="company">渠道</label>
+        <input class="pull-center" oninput="searchCompany(this)" type="text" id="company" style="border: 1px solid #ccc; border-radius: 5px; height: 33px;" />
+        <button type="button" class="btn btn-success query" id="data-date" value="">查看今天新加</button>
+        <button type="reset" class="btn btn-default query" id="data-reset" value="">重置</button>
+        <a role="button" href="{{ path('company_create') }}" class="pull-right btn btn-primary">创建新渠道</a>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+                <th width="6%">#</th>
+                <th>地区名称</th>
+                <th>国家名称</th>
+                <th class="th-w220">公司名称</th>
+                <th class="th-w380-hide">公司网站</th>
+                <th>抓取类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in list %}
+            <tr title="地区：{{ item.getArea.areaName }}&#13;国家：{{ item.getCountry.countryName }}&#13;渠道：{{ item.companyName }}&#13;抓取类型：{{ item.getStatusDesc() }}&#13;备注：{{ item.remarks }}" class="company_tr" data-status="{{ item.status }}" data-area="{{ item.getArea.id }}" data-date="{{ item.createDate|date('Y-m-d') }}">
+                <td>{{ item.id }}</td>
+                <td>{{ item.getArea.areaName }}</td>
+                <td>{{ item.getCountry.countryName }}</td>
+                <td class="td-w220">{{ item.companyName }}</td>
+                <td class="td-w380-hide">
+                    {% for site in item.getSitesArray %}
+                        <a href="{{ site }}" target="_blank">{{ site }}</a><br>
+                    {% endfor %}
+                </td>
+                <td>{{ item.getStatusDesc() }}</td>
+                <td>
+                    <a href="{{ path('company_edit', {'id':item.id}) }}" class="btn btn-sm btn-warning">修改</a>
+                    <button data-placement="top" href="{{ path('company_delete', {'id':item.id}) }}" class="btn btn-sm btn-danger">删除</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a role="button" href="{{ path('company_create') }}" class="pull-right btn btn-primary">创建新渠道</a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="//cdn.bootcss.com/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js"></script>
+<script>
+    (function(){
+        $(".query").change(function(e){
+            queryCompanyByCondition();
+        });
+        $(".query").click(function(){
+            if($(this).is('button')){
+                if(this.id=='data-date')
+                    setQueryDate(this);
+                if(this.id=='data-reset')
+                    setQueryReset();
+
+                queryCompanyByCondition();
+            }
+        });
+        function setQueryDate(self){
+            if($(self).val()){
+                $(self).val("");
+                $(self).html("查看今天新加");
+            }else{
+                $(self).val('{{ "now"|date('Y-m-d') }}');
+                $(self).html("查看全部日期");
+            }
+        }
+        function setQueryReset(){
+            $(".query").val("");
+            $("#data-date").html("查看今天新加");
+        }
+        function queryCompanyByCondition(){
+
+            var c="";
+            $(".query").each(function(){
+                c += $(this).val() ? '['+this.id +'='+ $(this).val() +']' : "";
+            });
+            $(".company_tr").hide();
+            $(".company_tr"+c).show();
+        }
+
+        $(".btn-danger").click(function(){
+            $(this).confirmation('show');
+            $(".popover-content").find(".btn-danger").attr("href", $(this).attr('href'));
+        });
+
+    })();
+
+    function searchCompany(obj){
+        var finder = $(obj).val().trim();
+        $(".company_tr[display!='show']").each(function(){
+            if($(this).text().indexOf(finder)>-1){
+                $(this).show();
+            }else {
+                $(this).hide();
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+.pagination{
+    overflow:hidden;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    padding:10px 10px 6px 10px;
+    border-top:1px solid #0cf;
+    _zoom:1;
+}
+span.current{ position:relative;
+    margin:-1px 3px;
+    padding:1px 4px;
+    border:3px double #ddd;
++border-color:#0cf;
+    background:#0cf;
+    color:#fff;}
+span.page a{
+    margin:0 1px;
+    padding:0 4px;
+    border:3px double #ddd;
++border-color:#eee;
+    background:#eee;
+    color:#06f;
+    text-decoration:none;
+}
+span.first a, span.previous a, span.next a, span.last a{
+    margin:0 1px;
+    padding:0 4px;
+    border:3px double #fff;
++border-color:#eee;
+    color:#06f;
+    text-decoration:none;
+}
+span.page>a:hover,span.next a:hover,span.last a:hover{
+    background:#0cf;
+    border-color:#ddd;
++border-color:#0cf;
+    color:#fff;
+}
+.count{font-size: 18px;}

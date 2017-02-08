@@ -1,0 +1,45 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <h1>GrabFields list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Tagtype</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for grabField in grabFields %}
+            <tr>
+                <td><a href="{{ path('grabfields_show', { 'id': grabField.id }) }}">{{ grabField.id }}</a></td>
+                <td>{{ grabField.name }}</td>
+                <td>{{ grabField.tagType }}</td>
+                <td>{% if grabField.status %}Yes{% else %}No{% endif %}</td>
+                <td>{{ grabField.data }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('grabfields_show', { 'id': grabField.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('grabfields_edit', { 'id': grabField.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('grabfields_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'admin.html.twig' %}
+{% block body %}
+    <h2>创建公司</h2>
+    {{ form_start(form) }}
+    {{ form_row(form.company) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.url) }}
+    <div class="form-group">
+        <input type="submit" value="{{ action }}" class="btn btn-success pull-right" />
+        <input type="reset"  value="Cancel" class="btn btn-default pull-right" />
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+
+    </script>
+{% endblock %}

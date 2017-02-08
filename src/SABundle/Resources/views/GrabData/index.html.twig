@@ -1,0 +1,45 @@
+{% extends 'SABundle::base.html.twig' %}
+
+{% block body %}
+    <h1>GrabData list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Data</th>
+                <th>Createdate</th>
+                <th>Createtime</th>
+                <th>Grabruleid</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for grabDatum in grabDatas %}
+            <tr>
+                <td><a href="{{ path('admin_sa_grab-data_show', { 'id': grabDatum.id }) }}">{{ grabDatum.id }}</a></td>
+                <td>{{ grabDatum.data }}</td>
+                <td>{% if grabDatum.createDate %}{{ grabDatum.createDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{% if grabDatum.createTime %}{{ grabDatum.createTime|date('H:i:s') }}{% endif %}</td>
+                <td>{{ grabDatum.grabRuleId }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('admin_sa_grab-data_show', { 'id': grabDatum.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_sa_grab-data_edit', { 'id': grabDatum.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_sa_grab-data_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

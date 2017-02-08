@@ -1,0 +1,23 @@
+CompaniesBundle\Entity\CompanyArea:
+    type: entity
+    table: company_area
+    indexes:
+        IDX_COMPANY_ID:
+            columns:
+                - company_id
+    id:
+        companyId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: company_id
+        areaId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: area_id
+    lifecycleCallbacks: {  }

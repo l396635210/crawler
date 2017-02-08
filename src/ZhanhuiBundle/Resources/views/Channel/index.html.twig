@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Channel list</h1>
+    <ul>
+        <li>
+            <a href="{{ path('admin_zh_channel_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Aid</th>
+                <th>Area</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for channel in channels %}
+            <tr>
+                <td><a href="{{ path('admin_zh_channel_show', { 'id': channel.id }) }}">{{ channel.id }}</a></td>
+                <td>{{ channel.name }}</td>
+                <td><a href="{{ channel.url }}" target="_blank">查看链接</a></td>
+                <td>{{ channel.aId }}</td>
+                <td>{{ channel.area }}</td>
+                <td>{% if channel.status %}Yes{% else %}No{% endif %}</td>
+                <td>{{ channel.data }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('admin_zh_channel_show', { 'id': channel.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('zh_channel_set_grab_rule', {'id':channel.id}) }}" class="btn btn-sm btn-warning">设置抓取规则</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_zh_channel_edit', { 'id': channel.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_zh_channel_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

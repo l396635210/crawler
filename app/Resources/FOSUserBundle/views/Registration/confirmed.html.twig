@@ -1,0 +1,14 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <div class="container">
+
+    <h2 class="alert" style="background: #eee">{{ '注册成功'|trans({'%username%': user.username}) }}|<a href="{{ path('homepage') }}">去首页</a></h2>
+    {% if targetUrl %}
+    <p><a href="{{ targetUrl }}">{{ 'registration.back'|trans }}</a></p>
+    {% endif %}
+    </div>
+
+{% endblock fos_user_content %}

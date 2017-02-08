@@ -1,0 +1,30 @@
+zhanhui:
+    resource: "@ZhanhuiBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+qa:
+    resource: "@QABundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+sa:
+    resource: "@SABundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+    prefix:   /
+wordpress:
+    resource: "@WordPressBundle/Controller/"
+    type:     annotation
+companies:
+    resource: "@CompaniesBundle/Controller/"
+    type:     annotation
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+_errors:
+    resource: "@TwigBundle/Resources/config/routing/errors.xml"
+    prefix:   /_error

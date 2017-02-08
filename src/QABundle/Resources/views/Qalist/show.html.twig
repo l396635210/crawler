@@ -1,0 +1,48 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <h1>SAList</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sAList.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ sAList.name }}</td>
+            </tr>
+            <tr>
+                <th>Siteid</th>
+                <td>{{ sAList.siteId }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{% if entity.status %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Tagid</th>
+                <td>{{ sAList.tagId }}</td>
+            </tr>
+            <tr>
+                <th>Data</th>
+                <td>{{ sAList.data }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('sa_salist_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('sa_salist_edit', { 'id': sAList.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,127 @@
+<style>
+    .modal{top:0;width:100%;height:100%; display: none; background: rgba(0, 0, 0, 0.498)}
+    .modal-content{margin-top: 30%; background:#ddd }
+    .modal-table{height:300px; overflow: scroll}
+</style>
+
+<div id="tips" class="modal" data-easein="fadeInRight" data-easeout="fadeOutRight" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">操作成功！</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#tips").find(".close").click(function(){
+        $("#tips").fadeOut(500);
+    });
+    function TipsModal(p){
+
+        this.init = function(){
+            $("#tips").delegate(".cancel","click",function(){
+                $("#tips").fadeOut(500);
+            });
+
+            $("#tips").find(".modal-footer").html('<button class="btn btn-primary cancel">我知道了</button>');
+        };
+        this.init();
+        this.p = p;
+        sessionStorage.setItem('tipsFooter','<div class="form-group">'+
+                '<input type="submit" value="Create" class="btn btn-success pull-right submit" />'+
+                '<input type="button"  value="Cancel" class="btn btn-default pull-right cancel" />'+
+                '</div>');
+        this.fadeIn = function(time){
+            $("#tips").fadeIn(time ? time : 500);
+        };
+        this.setTitle = function(title){
+            $("#tips").find(".modal-title").html(title);
+        }
+        this.setContent = function(p){
+            $("#tips").find(".modal-body").find('p').html(p);
+        };
+        this.setContent(p);
+
+        this.setButton = function(){
+            $("#tips").find("div.modal-footer").html(sessionStorage.getItem('tipsFooter'));
+        };
+
+        this.fadeOut = function(p){
+            this.setContent(p);
+            $("#tips").fadeOut(500);
+        };
+
+        /*************************设置表单start*****************************/
+        this.tipsCheckForm = function(){
+            var bool = true;
+            $("#tips").find("input").each(function(){
+                if($(this).prev().is("label") && $(this).val().length==0){
+                    alert($(this).prev().text()+"未填写");
+                    bool = false;
+                    return false;
+                }
+            });
+            $("#tips").find("select").removeAttr("disabled");
+            return bool;
+        };
+
+        this.setSumbUrl = function(url){
+
+            var tipsCheckForm = function(){
+                var bool = true;
+                $("#tips").find("input").each(function(){
+                    if($(this).prev().is("label") && $(this).val().length==0){
+                        alert($(this).prev().text()+"未填写");
+                        bool = false;
+                        return false;
+                    }
+                });
+                $("#tips").find("select").removeAttr("disabled");
+                return bool;
+            };
+
+            $("#tips").delegate("input.submit","click",function(){
+                if(! tipsCheckForm() )
+                    return false;
+                $.post( url
+                    , $("#tips").find("form").serialize()
+                    , function(data){
+                        data = eval("("+data+")");
+                        tipsAjaxCallBack(data)
+                    }
+                );
+            });
+
+
+            var tipsAjaxCallBack = function(data){
+                data = data.data; var html;
+                if(data)
+                    html = '<div class="flash-notice"><div class="alert alert-success">'+data+'</div></div>';
+                else
+                    html = '<div class="flash-notice"><div class="alert alert-error">操作失败</div></div>';
+                $(".main").prepend(html);
+                setTimeout(function(){
+                    $("#tips").fadeOut(500);
+                    $("#tips").find("form").empty().submit();
+                }, 500);
+            };
+
+
+        };
+
+
+
+        /*************************设置表单end*****************************/
+
+    }
+
+</script>

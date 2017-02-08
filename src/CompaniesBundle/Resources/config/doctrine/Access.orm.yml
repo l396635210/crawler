@@ -1,0 +1,36 @@
+CompaniesBundle\Entity\Access:
+    type: entity
+    table: access
+    indexes:
+        groupId:
+            columns:
+                - role_id
+        nodeId:
+            columns:
+                - node_id
+    id:
+        roleId:
+            type: smallint
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: role_id
+        nodeId:
+            type: smallint
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: node_id
+    fields:
+        level:
+            type: boolean
+            nullable: false
+        module:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+    lifecycleCallbacks: {  }

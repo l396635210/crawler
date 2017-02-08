@@ -1,0 +1,251 @@
+<?php
+
+namespace SABundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * SAList
+ *
+ * @ORM\Table(name="sa_list")
+ * @ORM\Entity(repositoryClass="SABundle\Repository\SAListRepository")
+ */
+class SAList
+{
+    /**
+     * @ORM\ManyToOne(targetEntity="Site", inversedBy="saList")
+     * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
+     */
+    private $site;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Tag", inversedBy="saList")
+     * @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
+     */
+    private $tag;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="site_id", type="integer")
+     */
+    private $siteId;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="boolean")
+     */
+    private $status;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="tag_id", type="integer")
+     */
+    private $tagId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="data", type="text", nullable=true)
+     */
+    private $data;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return SAList
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set siteId
+     *
+     * @param integer $siteId
+     *
+     * @return SAList
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId;
+
+        return $this;
+    }
+
+    /**
+     * Get siteId
+     *
+     * @return int
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
+    }
+
+    /**
+     * Set status
+     *
+     * @param boolean $status
+     *
+     * @return SAList
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return bool
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set tagId
+     *
+     * @param integer $tagId
+     *
+     * @return SAList
+     */
+    public function setTagId($tagId)
+    {
+        $this->tagId = $tagId;
+
+        return $this;
+    }
+
+    /**
+     * Get tagId
+     *
+     * @return int
+     */
+    public function getTagId()
+    {
+        return $this->tagId;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $data
+     *
+     * @return SAList
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get data
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set site
+     *
+     * @param \SABundle\Entity\Site $site
+     *
+     * @return SAList
+     */
+    public function setSite(\SABundle\Entity\Site $site = null)
+    {
+        $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * Get site
+     *
+     * @return \SABundle\Entity\Site
+     */
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    /**
+     * Set tag
+     *
+     * @param \SABundle\Entity\Tag $tag
+     *
+     * @return SAList
+     */
+    public function setTag(\SABundle\Entity\Tag $tag = null)
+    {
+        $this->tag = $tag;
+
+        return $this;
+    }
+
+    /**
+     * Get tag
+     *
+     * @return \SABundle\Entity\Tag
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+
+}

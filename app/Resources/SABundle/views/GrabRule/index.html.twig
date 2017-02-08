@@ -1,0 +1,39 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <h1>GrabRule list</h1>
+    <div class="table-responsive">
+        <table class="table-striped" >
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Status</th>
+                    <th>Entity</th>
+                    <th>EntityId</th>
+                    <th>Urls</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for grabRule in grabRules %}
+                <tr>
+                    <td><a href="{{ path('admin_sa_grab-data_show', { 'id': grabRule.id }) }}">{{ grabRule.id }}</a></td>
+                    <td>{% if grabRule.status %}Yes{% else %}No{% endif %}</td>
+                    <td>{{ grabRule.entity }}</td>
+                    <td>{{ grabRule.entityId }}</td>
+                    <td>{{ grabRule.urls }}</td>
+                    <td>
+                        <ul>
+                            <li>
+                                <a href="{{ path('sa_grab-rule_show', { 'id': grabRule.id }) }}">show</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('sa_grab-rule_edit', { 'id': grabRule.id }) }}">edit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

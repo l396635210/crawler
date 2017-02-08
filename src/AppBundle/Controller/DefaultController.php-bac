@@ -1,0 +1,101 @@
+<?php
+
+namespace AppBundle\Controller;
+
+use AppBundle\Entity\CommonCode;
+use AppBundle\Service\LogTool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DomCrawler\Crawler;
+
+class DefaultController extends Controller
+{
+    protected $linkRoles;
+    protected $newestTender;
+    protected $mailBody= "";
+    /**
+     * @Route("/", name="homepage")
+     * @Method({"GET","POST"});
+     */
+    public function indexAction(Request $request)
+    {
+        $data = [];
+        if(!$request->getClientIp()) {
+
+            $logTool = new LogTool('applog', $this->get('kernel')->getRootDir());
+            $now = date('H');
+            $logTool->addInfo("开始执行定时任务>>>");
+
+            $logTool->addInfo("准备首次抓取>>>>>>");
+            if ($request->request->get("command") == "crawler"){
+                $logTool->addInfo(">>>开始招标抓取");
+                $data['firstCrawlResult'] = $this->forward('AppBundle:Crawler:asyncGrab');
+                $logTool->addInfo("<<<抓取招标结束");
+                $logTool->addInfo(">>>开始抓取转推信息");
+                $this->forward("AppBundle:Information:asyncGrab");
+                $logTool->addInfo(">>>抓取转推信息结束");
+            }
+            $this->forward('AppBundle:Information:asyncGrab');
+            $logTool->addInfo("准备二次抓取>>>>>>");
+            if ($now == CommonCode::TIMER_SECOND_CRAWL_TENDER){
+                $logTool->addInfo(">>>开始二次抓取");
+                $data['secondCrawlResult'] = $this->forward('AppBundle:Crawler:crawlTenderForError');
+                $logTool->addInfo("<<<二次抓取结束");
+                $logTool->addInfo(">>>开始推送招标信息");
+                $this->forward('CompaniesBundle:Titem:pushTest');
+            }
+
+            if($now >= CommonCode::TIMER_BUSINESS_FIRST_PUSH && $now<=CommonCode::timerBusinessLastPush()){
+                $logTool->addInfo(">>>开始推送转推信息");
+                $this->forward('WordPressBundle:Post:postTest');
+            }
+
+            $logTool->addInfo("准备发送招标邮件>>>>>>");
+            if ($now == CommonCode::TIMER_SEND_TENDER_MAIL || $now == CommonCode::TIMER_SEND_TENDER_MAIL2){
+                $er = $this->getDoctrine()->getRepository('AppBundle:MailLog');
+                $list = $er->findBy(['sentDate'=>new \DateTime()]);
+                if(!$list){
+                    $logTool->addInfo(">>>开始发送招标邮件");
+                    $data['sendTenderMailResult'] = $this->forward('AppBundle:Mail:setTenderMessageAndSend');
+                    $logTool->addInfo("<<<发送招标邮件结束");
+                    $logTool->addInfo(">>>开始发送资讯邮件");
+                    $data['sendInfoMailResult'] = $this->forward('AppBundle:Emp:sendInformationMailsForEmp');
+                    $logTool->addInfo("<<<发送资讯邮件结束");
+                }
+            }
+
+            $logTool->addInfo("准备发送管理员邮件>>>>>>");
+            if ($now == CommonCode::TIMER_SEND_ADMIN_MAIL || $now==CommonCode::TIMER_SEND_ADMIN_MAIL2){
+                $logTool->addInfo(">>>开始发送管理员邮件");
+                $data['sendAdminMail'] = $this->forward('AppBundle:Mail:setAdminMessageAndSend');
+                $logTool->addInfo("<<<发送管理员邮件结束");
+            }
+
+            $logTool->addInfo("执行定时任务完成>>>");
+        }
+
+        $response['data'] = $data;
+        return $this->render('default/admin.html.twig', array(
+            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
+            'response' => $response,
+        ));
+    }
+
+    /**
+     * @Route("/admin", name="admin")
+     */
+    public function adminAction(Request $request)
+    {
+
+        // replace this example code with whatever you need
+        return $this->render('default/admin.html.twig', array(
+            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
+            'active'   => $request->get('_route'),
+        ));
+    }
+    
+}

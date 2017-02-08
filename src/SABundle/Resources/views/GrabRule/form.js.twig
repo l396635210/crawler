@@ -1,0 +1,109 @@
+$("#grabRule").delegate(".new", "click", function(){
+    $html = $(this).parents(".row").prop('outerHTML');
+    $(this).parents(".form-group").append($html);
+});
+$("#grabRule").delegate(".del", "click", function(){
+    $(this).parents(".row")[0].remove();
+});
+setGrabRuleDataToOptions();
+function setGrabRuleDataToOptions() {
+    if($("#grab_rule_data").val()){
+        var options = JSON.parse($("#grab_rule_data").val());
+        for( lev in options){
+            setPageRuleOptions(lev, options[lev]);
+        }
+    }
+}
+function setPageRuleOptions(lev, pageRules) {
+    console.log(pageRules);
+    var i = 0;
+    for(key in pageRules){
+        $("#lev-"+lev).find("select").eq(i).val(key);
+        $("#lev-"+lev).find("input").eq(i).val(pageRules[key]);
+        $("#lev-"+lev).find(".new").eq(i).click();
+        i++;
+    }
+    if(i>0){
+        $("#lev-"+lev).find(".del").eq(i).click();
+    }
+}
+
+$("#grabRule-test").click(function () {
+    grabRuleSetData();
+    $.post("{{ path("sa_grabData_test") }}",
+            {
+                urls: $(".grabRule-urls").val(),
+                rule: $(".grabRule-data").val(),
+                prefix: $(".grabRule-prefix").val()
+            },
+            function (data) {
+                grabRuleTestCallBack(data);
+            });
+});
+
+function grabRuleTestCallBack(data) {
+    var html = grabRuleGenerateHtml(data);
+    var $tips = new TipsModal(html);
+    $(".modal-body").html(html);
+    $(".modal-body").addClass('modal-table');
+    $tips.fadeIn();
+}
+
+function grabRuleGenerateHtml(data) {
+    var html = '<table class="table table-striped">';
+    html += '<thead><tr>' +
+            '<th>#</th>' +
+            '<th>data</th>' +
+            '</tr></thead>';
+    for(i in data){ var row = data[i];
+        html += '<tbody><tr>';
+        html += '<td>'+i+'</td>';
+        //html += '<td>'+JSON.stringify(row)+'</td>';
+        html += '<td>'+grabRuleSetRow(row, 0)+'</td>';
+        html += '</tr></tbody>'
+    }
+    html += '</table>';
+    return html;
+}
+
+function grabRuleSetRow(data, $i) {
+    html = "";
+    for( key in data ){
+        if(!isNaN(key)){
+            html += $i>0 ? $i+"---<br>" : "";
+            html += grabRuleSetRow(data[key], $i++);
+        }else{
+            html += "<b>"+ key + "</b>:" +data[key] + "<br>";
+        }
+    }
+    return html;
+}
+
+function grabRuleSetData() {
+    var lev1 = setGrabRulesText(1);
+    var lev2 = setGrabRulesText(2);
+    console.log(JSON.stringify({
+        1: lev1,
+        2: lev2
+    }));
+    $(".grabRule-data").val(JSON.stringify({
+        1: lev1,
+        2: lev2
+    }));
+}
+var setGrabRulesText = function(lev){
+    $lev = "#lev-"+lev;
+    var grabRules = {};
+    $($lev).find(".row").each(function () {
+        if($(this).find(".grabRule").val()){
+            var grabOption = $(this).find(".grabOptions").val();
+            grabRules[grabOption] = $(this).find(".grabRule").val();
+        }
+    });
+    return grabRules;
+};
+
+$("#form_create").click(function () {
+    grabRuleSetData();
+    $("form[name='grab_rule']").submit();
+});

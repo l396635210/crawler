@@ -1,0 +1,184 @@
+<?php
+
+namespace WordPressBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+/**
+ * Area
+ *
+ * @ORM\Table(name="wp_posts")
+ * @ORM\Entity(repositoryClass="WordPressBundle\Repository\PostRepository")
+ */
+class Post
+{
+    const USER = 291;
+    const TAG  = 297;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="ID", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="post_author", type="bigint")
+     */
+    private $postAuthor;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="post_date", type="datetime")
+     */
+    private $postDate;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="post_date_gmt", type="datetime")
+     */
+    private $postDateGmt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="post_title", type="string")
+     */
+    private $postTitle;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="post_content", type="string")
+     */
+    private $postContent;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="post_status", type="string")
+     */
+    private $postStatus;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ping_status", type="string")
+     */
+    private $pingStatus;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="post_modified", type="datetime")
+     */
+    private $postModified;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="post_modified_gmt", type="datetime")
+     */
+    private $postModifiedGmt;
+
+    /**
+     * Set postAuthor
+     *
+     * @param integer $postAuthor
+     *
+     * @return Post
+     */
+    public function setPostAuthor($postAuthor)
+    {
+        $this->postAuthor = $postAuthor;
+
+        return $this;
+    }
+
+    /**
+     * Get postAuthor
+     *
+     * @return integer
+     */
+    public function getPostAuthor()
+    {
+        return $this->postAuthor;
+    }
+
+    /**
+     * Set postDate
+     *
+     * @param \DateTime $postDate
+     *
+     * @return Post
+     */
+    public function setPostDate($postDate)
+    {
+        $this->postDate = $postDate;
+
+        return $this;
+    }
+
+    /**
+     * Get postDate
+     *
+     * @return \DateTime
+     */
+    public function getPostDate()
+    {
+        return $this->postDate;
+    }
+
+    /**
+     * Set postDateGmt
+     *
+     * @param \DateTime $postDateGmt
+     *
+     * @return Post
+     */
+    public function setPostDateGmt($postDateGmt)
+    {
+        $this->postDateGmt = $postDateGmt;
+
+        return $this;
+    }
+
+    /**
+     * Get postDateGmt
+     *
+     * @return \DateTime
+     */
+    public function getPostDateGmt()
+    {
+        return $this->postDateGmt;
+    }
+
+    /**
+     * Set postTitle
+     *
+     * @param string $postTitle
+     *
+     * @return Post
+     */
+    public function setPostTitle($postTitle)
+    {
+        $this->postTitle = $postTitle;
+
+        return $this;
+    }
+
+    /**
+     * Get postTitle
+     *
+     * @return string
+     */
+    public function getPostTitle()
+    {
+        return $this->postTitle;
+    }
+}

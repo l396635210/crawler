@@ -1,0 +1,183 @@
+{% extends 'admin.html.twig' %}
+{% block title %}招标-信息接收对象{% endblock %}
+{% block body %}
+    <h2>接收对象信息</h2>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.empName) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.empMail) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.isSendTenders) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.isSendInformation) }}
+        </div>
+    </div>
+    {{ form_widget(form) }}
+    <div class="form-group sendTenderList">
+        <p><label>选择发送邮件公司，不选为全部发送</label></p>
+        <p><span class="bg-primary">未选择</span>&emsp;<span class="bg-info">已选择</span></p>
+        {% for item in companies %}
+
+            {% if area!=item.area.id %}
+                <h4>
+                    <span  class="area" data-id="{{ item.area.id }}">{{ item.area.areaName }}</span>
+                    <span class="cancel-area" data-id="{{ item.area.id }}">取消全选</span>
+                </h4>
+            {% endif %}
+                <div class="btn btn-primary companies" is-choice="false" data-area="{{ item.area.id }}" data-id="{{ item.id }}">{{ item.companyName }}</div>
+            {% set area=item.area.id %}
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="form-group sendInfoList">
+        <p><label>选择发送邮件内容源，不选为全部发送</label></p>
+        <p><span class="bg-primary">未选择</span>&emsp;<span class="bg-info">已选择</span></p>
+        {% for item in sites %}
+            {% if category!=item.category.id %}
+                <h4>
+                    <span class="category" data-id="{{ item.category.id }}">{{ item.category.name }}</span>
+                    <span class="cancel-category" data-id="{{ item.category.id }}">取消全选</span>
+                </h4>
+            {% endif %}
+            <div class="btn btn-primary sites" is-choice="false" data-category="{{ item.category.id }}" data-id="{{ item.id }}">{{ item.name }}</div>
+            {% set category=item.category.id %}
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <input type="submit" value="{{ action }}" class="btn btn-success col-md-offset-5" />
+        <input type="reset"  value="Reset" class="btn btn-default col-md-offset-1" />
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        (function(){
+            init();
+
+            function init(){
+                $(".cancel-area, .cancel-category").hide();
+                var company = '{{ form.vars.value.company }}';
+                var sites = '{{ form.vars.value.sites }}';
+               /* var choiced = company.split(",");*/
+                company = company.split(",");
+                $(".companies").each(function(){
+                    if($.inArray($(this).data('id').toString(), company)>-1){
+                        $(this).attr('is-choice', 'true')
+                               .removeClass('btn-primary')
+                               .addClass('btn-info');
+                    }
+                });
+                sites = sites.split(",");
+                $(".sites").each(function(){
+                    if($.inArray($(this).data('id').toString(), sites)>-1){
+                        $(this).attr('is-choice', 'true')
+                                .removeClass('btn-primary')
+                                .addClass('btn-info');
+                    }
+                });
+                $(".sendInfoList, .sendTenderList").hide();
+
+                if( $("#emp_isSendTenders").val()>0){
+                    $(".sendTenderList").show();
+                }
+                if( $("#emp_isSendInformation").val()>0){
+                    $(".sendInfoList").show();
+                }
+            }
+
+            $("#emp_isSendTenders").change(function () {
+                if($(this).val()>0){
+                    $(".sendTenderList").show();
+                }else{
+                    $(".sendTenderList").hide();
+                }
+            });
+
+            $("#emp_isSendInformation").change(function () {
+                if($(this).val()>0){
+                    $(".sendInfoList").show();
+                }else{
+                    $(".sendInfoList").hide();
+                }
+            });
+
+            $("input[type=submit]").click(function(){
+                setCompanyForSubmit();
+                setSitesForSubmit();
+            });
+
+            $(".companies, .sites").click(function(){
+                choiceCompanies(this);
+            });
+            function choiceCompanies(self){
+                var is_choice = $(self).attr('is-choice');
+                $(self).attr('is-choice', is_choice=='false' ? 'true' : 'false');
+                if($(self).attr('is-choice')=='true'){
+                    $(self).removeClass('btn-primary')
+                           .addClass('btn-info');
+                }else{
+                    $(self).removeClass('btn-info')
+                            .addClass('btn-primary');
+                }
+            }
+
+            $(".area").click(function () {
+                $(".companies[data-area='"+$(this).data("id")+"']").each(function () {
+                    $(this).attr("is-choice","false");
+                    choiceCompanies(this);
+                });
+                $(this).next(".cancel-area").show();
+            });
+            $(".cancel-area").click(function () {
+                $(".companies[data-area='"+$(this).data("id")+"']").each(function () {
+                    $(this).attr("is-choice","true");
+                    choiceCompanies(this);
+                });
+                $(this).hide();
+            });
+
+            $(".category").click(function () {
+                $(".sites[data-category='"+$(this).data("id")+"']").each(function () {
+                    $(this).attr("is-choice","false");
+                    choiceCompanies(this);
+                });
+                $(this).next(".cancel-category").show();
+            });
+
+            $(".cancel-category").click(function () {
+                $(".sites[data-category='"+$(this).data("id")+"']").each(function () {
+                    $(this).attr("is-choice","true");
+                    choiceCompanies(this);
+                });
+                $(this).hide();
+            });
+
+            function setCompanyForSubmit(){
+                var company = [];
+                $(".companies").each(function(){
+                    if($(this).attr('is-choice')=='true')
+                        company.push($(this).data('id'))
+                });
+                $("#emp_company").val(company);
+            }
+
+            function setSitesForSubmit(){
+                var sites = [];
+                $(".sites").each(function(){
+                    if($(this).attr('is-choice')=='true')
+                        sites.push($(this).data('id'))
+                });
+                $("#emp_sites").val(sites);
+            }
+        })()
+
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'admin.html.twig' %}
+{% block title %}资讯-内容源管理{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .lately {
+            -webkit-border-radius: 28px;
+            -moz-border-radius: 28px;
+            border-radius: 28px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/table.css') }}">
+{% endblock %}
+{% block body %}
+    <h2 class="sub-header">内容源管理</h2>
+    <form class="query-form" onsubmit="return false" style="border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <a href="{{ path('information_crawler') }}" class="btn btn-success crawler" >抓取</a>
+        搜索：<input class="pull-center" type="text" id="keywords" style="border: 1px solid #ccc; border-radius: 5px; height: 33px;" />
+        <a role="button" href="{{ path('site_create') }}" class="pull-right btn btn-primary">创建内容源</a>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+                <th width="6%">#</th>
+                <th>分类</th>
+                <th class="th-w220">内容源</th>
+                <th class="th-w380-hide">公司网站</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in list %}
+            <tr class="toQuery" title="分类：{{ item.category.name }}&#13;渠道：{{ item.name }}&#13;网站：{{ item.url }}">
+                <td>{{ item.id }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.name }}</td>
+                <td class="td-w380-hide">
+                    {% for site in item.getUrlArr %}
+                        <a href="{{ site }}" target="_blank">{{ site }}</a><br>
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{{ path('site_edit', {'id':item.id}) }}" class="btn btn-sm btn-warning">修改</a>
+                    <a href="{{ path('source_set_grab_rule', {'id':item.id}) }}" class="btn btn-sm btn-default">设置抓取规则</a>
+                    <button data-placement="top" href="{{ path('site_delete', {'id':item.id}) }}" class="btn btn-sm btn-danger">删除</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a role="button" href="{{ path('site_create') }}" class="pull-right btn btn-primary">创建内容源</a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="//cdn.bootcss.com/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js"></script>
+    <script src="{{ asset('bundles/app/js/dom-sql.js') }}"></script>
+<script>
+    (function(){
+        var domSQL = new DomSQL();
+        domSQL.config({toQuery:".toQuery"});
+
+        var keywords = document.getElementById("keywords");
+        keywords.oninput = function(){
+            domSQL.like(this.value.trim()).query();
+        };
+
+        $(".query").change(function(){
+            domSQL.where(this.id, $(this).val()).query();
+        });
+
+        $(".query").click(function(){
+            if($(this).is('button')){
+                if(this.id=='data-date')
+                    setQueryDate(this);
+                if(this.id=='data-reset')
+                    setQueryReset();
+            }
+        });
+        function setQueryDate(self){
+            if($(self).val()){
+                $(self).val("");
+                $(self).html("查看今天新加");
+            }else{
+                $(self).val('{{ "now"|date('Y-m-d') }}');
+                $(self).html("查看全部日期");
+            }
+            domSQL.where(self.id, $(self).val()).query();
+        }
+        function setQueryReset(){
+            $(".query").val("");
+            $("#data-date").html("查看今天新加");
+            domSQL.reset();
+        }
+
+        $(".btn-danger").click(function(){
+            $(this).confirmation('show');
+            $(".popover-content").find(".btn-danger").attr("href", $(this).attr('href'));
+        });
+
+    })();
+
+
+</script>
+{% endblock %}

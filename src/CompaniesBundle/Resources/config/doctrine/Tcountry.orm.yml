@@ -1,0 +1,32 @@
+CompaniesBundle\Entity\Tcountry:
+    type: entity
+    table: tcountry
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        areaId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: area_id
+        name:
+            type: string
+            nullable: false
+            length: 200
+            options:
+                fixed: false
+        status:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '1'
+    lifecycleCallbacks: {  }

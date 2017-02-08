@@ -1,0 +1,29 @@
+CompaniesBundle\Entity\UserCollect:
+    type: entity
+    table: user_collect
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        userId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: user_id
+        companyId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: company_id
+        addtime:
+            type: datetime
+            nullable: true
+    lifecycleCallbacks: {  }

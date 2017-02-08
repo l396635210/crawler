@@ -1,0 +1,77 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <h2 class="sub-title">新建抓取规则</h2>
+    </div>
+    <div class="row">
+        <div id="grabRule">
+            <div class="form-group">
+                <button id="grabRule-test" class="btn btn-default " type="button">测试抓取</button>
+            </div>
+            {{ form_start(form) }}
+            <div class="row form-group">
+                <div class="col-md-8">
+                    {{ form_row(form.entity) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.entityId) }}
+                </div>
+            </div>
+            <div class="row form-group">
+                {{ form_row(form.urls) }}
+            </div>
+            <div class="row form-group">
+                {{ form_row(form.data) }}
+            </div>
+            <div class="row form-group">
+                {{ form_row(form.prefix) }}
+            </div>
+            <div id="lev-1" class="form-group">
+                <p><label>一级页面抓取规则</label></p>
+                <div class="row">
+                    <div class="col-sm-2">
+                        {{ form_row(form.grabOptions.first) }}
+                    </div>
+                    <div class="col-sm-7">
+                        {{ form_row(form.grabRule.first) }}
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <button class="btn btn-default new text-center" type="button">继续添加</button>
+                        <button class="btn btn-default del text-center" type="button">删除规则</button>
+                    </div>
+                </div>
+            </div>
+            <div id="lev-2" class="form-group">
+                <p><label>二级页面抓取规则</label></p>
+                <div class="row">
+                    <div class="col-sm-2">
+                        {{ form_row(form.grabOptions.second) }}
+                    </div>
+                    <div class="col-sm-7">
+                        {{ form_row(form.grabRule.second) }}
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <button class="btn btn-default new text-center" type="button">继续添加</button>
+                        <button class="btn btn-default del text-center" type="button">删除规则</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <button id="form_create" class="btn btn-success pull-right">Create</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    {% include 'SABundle:GrabRule:form.js.twig' %}
+</script>
+{% endblock %}
+
+{% block modal %}
+    {% include 'modal/tips.html.twig' %}
+{% endblock %}

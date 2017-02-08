@@ -1,0 +1,50 @@
+{% extends 'admin.html.twig' %}
+{% block title %}问答管理-网站信息{% endblock %}
+{% block body %}
+    <h2 class="sub-header">网站列表</h2>
+    <ul>
+        <li>
+            <a class="btn btn-primary" href="{{ path('qa_site_new') }}">创建新的渠道网站</a>
+        </li>
+    </ul>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Host</th>
+                    <th>Data</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for site in sites %}
+                <tr>
+                    <td><a href="{{ path('qa_site_show', { 'id': site.id }) }}">{{ site.id }}</a></td>
+                    <td>{{ site.name }}</td>
+                    <td>{% if site.status %}是{% else %}否{% endif %}</td>
+                    <td>{{ site.host }}</td>
+                    <td>{{ site.data }}</td>
+                    <td>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="{{ path('qa_site_show', { 'id': site.id }) }}">show</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('qa_site_edit', { 'id': site.id }) }}">edit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <ul>
+        <li>
+            <a class="btn btn-primary" href="{{ path('qa_site_new') }}">创建新的渠道网站</a>
+        </li>
+    </ul>
+{% endblock %}

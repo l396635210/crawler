@@ -1,0 +1,14 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="auth-form">
+    <div class="auth-form-header">
+        <h1>Register</h1>
+    </div>
+    <div class="auth-form-body">
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+    {{ form_widget(form) }}
+    <div style="border-top:1px solid #eee; margin-top: 5px;">
+        <input type="submit" class="btn btn-primary btn-block"  value="{{ 'registration.submit'|trans }}" />
+    </div>
+{{ form_end(form) }}
+    </div>
+</div>

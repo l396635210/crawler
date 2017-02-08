@@ -1,0 +1,180 @@
+<?php
+
+namespace SABundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+// DON'T forget this use statement!!!
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use SABundle\Entity\SAList;
+/**
+ * Tag
+ *
+ * @ORM\Table(name="sa_tag")
+ * @ORM\Entity(repositoryClass="SABundle\Repository\TagRepository")
+ * @UniqueEntity(
+ *     fields = "name",
+ *     message = "该名称已存在"
+ * )
+ */
+class Tag
+{
+    /**
+     * @ORM\OneToMany(targetEntity="SAList", mappedBy="tag")
+     */
+    private $saList;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     */
+    private $name;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="boolean")
+     */
+    private $status;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="data", type="text", nullable=true)
+     */
+    private $data;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Tag
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set status
+     *
+     * @param boolean $status
+     *
+     * @return Tag
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return bool
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $data
+     *
+     * @return Tag
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get data
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->saList = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add saList
+     *
+     * @param \SABundle\Entity\SAList $saList
+     *
+     * @return Tag
+     */
+    public function addSaList(\SABundle\Entity\SAList $saList)
+    {
+        $this->saList[] = $saList;
+
+        return $this;
+    }
+
+    /**
+     * Remove saList
+     *
+     * @param \SABundle\Entity\SAList $saList
+     */
+    public function removeSaList(\SABundle\Entity\SAList $saList)
+    {
+        $this->saList->removeElement($saList);
+    }
+
+    /**
+     * Get saList
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSaList()
+    {
+        return $this->saList;
+    }
+}
