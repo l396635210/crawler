@@ -2,6 +2,7 @@
 
 namespace SABundle\Entity;
 
+use AppBundle\Entity\CommonCode;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,24 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class GrabRule
 {
+    /**
+     * @ORM\OneToMany(targetEntity="GrabLog", mappedBy="grabRule")
+     */
+    private $grabLogs;
+
+    public function getGrabLogs(){
+        return $this->grabLogs;
+    }
+
+    /**
+     * @ORM\OneToMany(targetEntity="GrabData", mappedBy="grabRule")
+     */
+    private $grabDatas;
+
+    public function getGrabDatas(){
+        return $this->grabDatas;
+    }
+
     /**
      * @var int
      *
@@ -31,7 +50,7 @@ class GrabRule
     /**
      * @var string
      *
-     * @ORM\Column(name="prefix", type="text")
+     * @ORM\Column(name="prefix", type="text", nullable=true)
      */
     private $prefix;
 
@@ -63,6 +82,19 @@ class GrabRule
      */
     private $entityId;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cookies", type="string")
+     */
+    private $cookies;
+
+    private static $requestMapping = [
+        "company" => CommonCode::AppBundle_Company,
+        "info"    => CommonCode::AppBundle_Site,
+        "zhanhui" => CommonCode::ZhanhuiBundle_Channel,
+        "qa"      => CommonCode::QABundle_QAList,
+    ];
     /**
      * Get id
      *
@@ -121,6 +153,9 @@ class GrabRule
         return $this->status;
     }
 
+    public function setGrabOptions($grabOptions){
+
+    }
     public function getGrabOptions(){
         return  ;
     }
@@ -203,5 +238,36 @@ class GrabRule
 
     public function getUrlsArr(){
         return explode(",",$this->urls);
+    }
+
+    /**
+     * Set prefix
+     *
+     * @param string $prefix
+     *
+     * @return GrabRule
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    /**
+     * Get prefix
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    public static function getRequestMapping($entity){
+        if(isset(self::$requestMapping[$entity])){
+            return self::$requestMapping[$entity];
+        }
+        return null;
     }
 }

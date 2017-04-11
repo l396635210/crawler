@@ -34,7 +34,8 @@ $("#grabRule-test").click(function () {
             {
                 urls: $(".grabRule-urls").val(),
                 rule: $(".grabRule-data").val(),
-                prefix: $(".grabRule-prefix").val()
+                prefix: $(".grabRule-prefix").val(),
+                cookies: $(".grabRule-cookies").val(),
             },
             function (data) {
                 grabRuleTestCallBack(data);

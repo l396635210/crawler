@@ -1,0 +1,15 @@
+{% extends 'admin.html.twig' %}
+{% block title %}招标-{{ title }}{% endblock %}
+
+{% block body %}
+    <h2>{{ title }}</h2>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="form-group">
+        <input type="submit" value="{{ action }}" class="btn btn-success pull-right" />
+        <input type="reset"  value="Reset" class="btn btn-default pull-right" />
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

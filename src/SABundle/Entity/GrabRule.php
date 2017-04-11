@@ -3,6 +3,7 @@
 namespace SABundle\Entity;
 
 use AppBundle\Entity\CommonCode;
+use DatumBundle\Entity\Channel;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -82,11 +83,19 @@ class GrabRule
      */
     private $entityId;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cookies", type="string", nullable=true)
+     */
+    private $cookies;
+
     private static $requestMapping = [
         "company" => CommonCode::AppBundle_Company,
         "info"    => CommonCode::AppBundle_Site,
         "zhanhui" => CommonCode::ZhanhuiBundle_Channel,
         "qa"      => CommonCode::QABundle_QAList,
+        "datum"   => Channel::LOGIC_NAME,
     ];
     /**
      * Get id
@@ -263,4 +272,85 @@ class GrabRule
         }
         return null;
     }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->grabLogs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->grabDatas = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Set cookies
+     *
+     * @param string $cookies
+     *
+     * @return GrabRule
+     */
+    public function setCookies($cookies)
+    {
+        $this->cookies = $cookies;
+
+        return $this;
+    }
+
+    /**
+     * Get cookies
+     *
+     * @return string
+     */
+    public function getCookies()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * Add grabLog
+     *
+     * @param \SABundle\Entity\GrabLog $grabLog
+     *
+     * @return GrabRule
+     */
+    public function addGrabLog(\SABundle\Entity\GrabLog $grabLog)
+    {
+        $this->grabLogs[] = $grabLog;
+
+        return $this;
+    }
+
+    /**
+     * Remove grabLog
+     *
+     * @param \SABundle\Entity\GrabLog $grabLog
+     */
+    public function removeGrabLog(\SABundle\Entity\GrabLog $grabLog)
+    {
+        $this->grabLogs->removeElement($grabLog);
+    }
+
+    /**
+     * Add grabData
+     *
+     * @param \SABundle\Entity\GrabData $grabData
+     *
+     * @return GrabRule
+     */
+    public function addGrabData(\SABundle\Entity\GrabData $grabData)
+    {
+        $this->grabDatas[] = $grabData;
+
+        return $this;
+    }
+
+    /**
+     * Remove grabData
+     *
+     * @param \SABundle\Entity\GrabData $grabData
+     */
+    public function removeGrabData(\SABundle\Entity\GrabData $grabData)
+    {
+        $this->grabDatas->removeElement($grabData);
+    }
+
 }

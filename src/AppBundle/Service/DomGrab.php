@@ -182,11 +182,13 @@ class DomGrab extends Client{
                 $this->getCookieJar()->set($cookie);
             }
         }
+        die;
     }
 
     public function getTendersCount($site, $rule){
         $crawler = $this->request('GET', $site);
-
+        $crawler = $this->request('POST', $site);
+dump($this->getCookieJar());die;
         $count = $this->parseChoice($crawler, $rule)->count();
 
         if(!$count){

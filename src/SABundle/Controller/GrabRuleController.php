@@ -147,7 +147,7 @@ class GrabRuleController extends Controller
     /**
      * Creates a form to delete a GrabData entity.
      *
-     * @param GrabData $grabDatum The GrabData entity
+     * @param GrabRule $grabDatum The GrabData entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
@@ -158,5 +158,20 @@ class GrabRuleController extends Controller
             ->setMethod('DELETE')
             ->getForm()
             ;
+    }
+
+    /**
+     * @Route("/status", name="sa_grab-rule_status")
+     */
+    public function setStatusAction(Request $request){
+        $em = $this->getDoctrine()->getManager();
+        $grabRule = $em->getRepository(GrabRule::class)
+            ->findOneBy([
+               "entity" => GrabRule::getRequestMapping($request->get("entity")),
+               "entityId" => $request->get("entityId")
+            ]);
+        $grabRule->setStatus($request->get("status"));
+        $em->persist($grabRule);
+        $em->flush();
     }
 }

@@ -1,0 +1,185 @@
+{% extends 'admin.html.twig' %}
+{% block title %}招标-渠道管理{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .lately {
+            -webkit-border-radius: 28px;
+            -moz-border-radius: 28px;
+            border-radius: 28px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/table.css') }}">
+{% endblock %}
+{% block body %}
+    <h2 class="sub-header">渠道管理</h2>
+    <form class="query-form" onsubmit="return false" style="border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <label for="area">选择地区</label>
+        <select class="btn btn-default query" id="data-area">
+            <option value="">全部</option>
+            {% for area in areaList %}
+                <option value="{{ area.id }}">{{ area.areaName }}</option>
+            {% endfor %}
+        </select>
+        <label for="status">抓取类型</label>
+        <select class="btn btn-default query" id="data-status">
+            <option value="" >全部</option>
+            <option value="1" >自动抓取</option>
+            <option value="2" >手动抓取</option>
+        </select>
+        <label class="sr-only-focusable" for="company">渠道</label>
+        <input class="pull-center" type="text" id="keywords" style="border: 1px solid #ccc; border-radius: 5px; height: 33px;" />
+        <button type="button" class="btn btn-success query" id="data-date" value="">查看今天新加</button>
+        <button type="reset" class="btn btn-default query" id="data-reset" value="">重置</button>
+        <a role="button" href="{{ path('company_create') }}" class="pull-right btn btn-primary">创建新渠道</a>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+                <th width="6%">#</th>
+                <th>地区</th>
+                <th>国家</th>
+                <th class="th-w220">公司</th>
+                <th class="th-w380-hide">网站</th>
+                <th width="8%">抓取类型</th>
+                <th class="text-center">是否推送</th>
+                <th width="10%">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in list %}
+            <tr title="地区：{{ item.getArea.areaName }}&#13;国家：{{ item.getCountry.countryName }}&#13;渠道：{{ item.companyName }}&#13;抓取类型：{{ item.getStatusDesc() }}&#13;备注：{{ item.remarks }}" class="company_tr" data-status="{{ item.status }}" data-area="{{ item.getArea.id }}" data-date="{{ item.createDate|date('Y-m-d') }}">
+                <td class="td-id" data-id="{{ item.id }}">{{ item.id }}</td>
+                <td>{{ item.getArea.areaName }}</td>
+                <td>{{ item.getCountry.countryName }}</td>
+                <td class="td-w220">({{ item.id }}){{ item.companyName }}</td>
+                <td class="td-w380-hide">
+                    {% for site in item.getSitesArray %}
+                        <a href="{{ site }}" target="_blank">{{ site }}</a><br>
+                    {% endfor %}
+                </td>
+                <td>{{ item.getStatusDesc() }}</td>
+                <td class="text-center"><button data-id="{{ item.id }}" data-val="{{ item.isPush }}" class="ch-push btn btn-sm {{ item.isPush ? 'btn-primary' : '' }}">{{ item.isPush ? '是' : '否' }}</button></td>
+                <td>
+                    <a href="{{ path('company_edit', {'id':item.id}) }}" class="btn btn-sm btn-default">修改</a>
+                    <a href="{{ path('set_grab_rule', {'id':item.id}) }}" class="btn btn-sm btn-warning">设置抓取规则</a>
+                    <button data-placement="top" href="{{ path('company_delete', {'id':item.id}) }}" class="btn btn-sm btn-danger">删除</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a role="button" href="{{ path('company_create') }}" class="pull-right btn btn-primary">创建新渠道</a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="//cdn.bootcss.com/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js"></script>
+    <script src="{{ asset('bundles/app/js/dom-sql.js') }}"></script>
+<script>
+    (function(){
+        var domSQL = new DomSQL();
+        domSQL.config({toQuery:".company_tr"});
+
+        var keywords = document.getElementById("keywords");
+        keywords.oninput = function(){
+            domSQL.like(this.value.trim()).query();
+        };
+
+        $(".query").change(function(){
+            domSQL.where(this.id, $(this).val()).query();
+        });
+
+        $(".query").click(function(){
+            if($(this).is('button')){
+                if(this.id=='data-date')
+                    setQueryDate(this);
+                if(this.id=='data-reset')
+                    setQueryReset();
+            }
+        });
+        function setQueryDate(self){
+            if($(self).val()){
+                $(self).val("");
+                $(self).html("查看今天新加");
+            }else{
+                $(self).val('{{ "now"|date('Y-m-d') }}');
+                $(self).html("查看全部日期");
+            }
+            domSQL.where(self.id, $(self).val()).query();
+        }
+        function setQueryReset(){
+            $(".query").val("");
+            $("#data-date").html("查看今天新加");
+            domSQL.reset();
+        }
+
+        $(".btn-danger").click(function(){
+            $(this).confirmation('show');
+            $(".popover-content").find(".btn-danger").attr("href", $(this).attr('href'));
+        });
+
+        $(".td-sort").click(function(){
+            if(!$(this).find("input").length){
+                $(this).html("<input class='input-sort form-control' type='text' data-id='"+$(this).data('id')+"' value='"+$(this).text()+"' />");
+                $(".input-sort").focus();
+            }
+        });
+
+        $("table").delegate(".input-sort", "blur", function(){
+            var request = {
+                "id"   : $(this).data('id'),
+                "sort" : $(this).val()
+            };
+            var self = this;
+            $.post("{{ path('company_editAsync') }}"
+                , request
+                , function(data){
+                        data = JSON.parse(data);
+                        if(data.data==true){
+                            $(self).parents(".td-sort").html(request.sort);
+                            var html =  $(".td-sort[data-id="+request.id+"]").parents("tr")[0].outerHTML;
+                            $(".td-sort[data-id="+request.id+"]").parents("tr").remove();
+                            $(".company_tr").each(function () {
+                                if(parseInt($(this).find(".td-sort").text())>request.sort){
+                                    $(this).before(html);
+                                    return false;
+                                }
+                            });
+                        }
+                });
+        });
+
+        $(".ch-push").click(function(){
+            var isPush = $(this).data('val') ? false : true;
+            var request = {
+                id   : $(this).data('id'),
+                isPush : isPush
+            };
+            var self = this;
+            $.post("{{ path('company_editAsync') }}"
+                    , request
+                    , function(data){
+                        data = JSON.parse(data);
+                        if(data.data==true){
+                            $(self).removeClass("btn-primary");
+                            if(isPush){
+                                $(self).text('是');
+                                $(self).addClass("btn-primary");
+                            }
+
+                            $(self).data('val', isPush);
+                        }
+            });
+        });
+        {% if(app.request.get('id')) %}
+            var top = $("td[data-id='{{ app.request.get('id') }}']").position().top;
+            $("html,body").scrollTop(top);
+        {% endif %}
+    })();
+
+
+</script>
+{% endblock %}

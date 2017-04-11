@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Category</h1>
+
+    <table class="table table-responsive table-bordered">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ category.id }}</td>
+            </tr>
+            <tr>
+                <th>上级栏目</th>
+                <td>{{ category.parent }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ category.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <section style="padding-left: 30px;">
+        <ul class="list-inline btn-group">
+            <li>
+                <a class="btn btn-link" href="{{ path('admin_report_category_index') }}">返回列表</a>
+            </li>
+            <li>
+                <a class="btn btn-primary" href="{{ path('admin_report_category_new') }}">继续添加</a>
+            </li>
+            <li>
+                <a class="btn btn-link" href="{{ path('admin_report_category_edit', { 'id': category.id }) }}">编辑</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
+                    <input class="btn btn-danger" type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        </ul>
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+<script>
+    /*
+    $(".btn-danger").click(function(){
+        $(this).confirmation('show');
+        $(".popover-content").find(".btn-danger").attr("href", location.href);
+    });
+    */
+</script>
+{% endblock %}

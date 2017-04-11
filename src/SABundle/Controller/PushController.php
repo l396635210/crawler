@@ -7,6 +7,7 @@ use AppBundle\Entity\CommonCode;
 use AppBundle\Entity\Site;
 use AppBundle\Service\LogTool;
 use Doctrine\ORM\EntityManager;
+use QABundle\Entity\QAList;
 use SABundle\Client;
 use SABundle\Entity\GrabData;
 use SABundle\Entity\GrabRule;
@@ -23,9 +24,13 @@ class PushController extends Controller
 
     private $grabRuleIds;
 
+    private function setPushQaBody(GrabData $grabData, $tags){
+        $request = Push::getQaData($grabData, $tags);
+        return $request;
+    }
+
     private function setPushZhanhuiBody(GrabData $grabData, $channels){
         $data = Push::getZhanhuiData($grabData, $channels);
-        dump($data);
         $request = array(
             'token'=>Push::setToken($data, Push::SALT_ZHANHUI),
             'type' => 'exhibition',
@@ -115,8 +120,7 @@ class PushController extends Controller
                 $request = $this->setPushZhanhuiBody($item, $channels);
                 $crawler = $client->request("POST",$api, $request);
                 $res = $crawler->filter("body")->text();
-
-            $this->pushCallBack($item, $res);
+                $this->pushCallBack($item, $res);
                 $i++;
             }catch (\Exception $e){
                 $logTool->addWarning($e->getMessage());
@@ -219,6 +223,48 @@ class PushController extends Controller
             }
         }
         return $pushData;
+    }
+
+    /**
+     * @Route("/super/push/qa/{env}", name="sa_push_qa", defaults={"env"="prod"})
+     */
+    public function qaAction(Request $request, $env){
+        $i = 0;
+        //set_time_limit(6000);
+        $this->logTool = $logTool = new LogTool('applog', $this->get('kernel')->getRootDir(), 'qa');
+        $logTool->addInfo("qaAction>>>准备推送问答抓取数据");
+
+        $grabData = $this->getGrabData(CommonCode::QABundle_QAList);
+dump($grabData);die;
+        $channels = $this->getDoctrine()->getRepository(QAList::class)
+            ->findBy(["status" => true]);
+        $tags = [];
+        foreach ($channels as $item){
+            $tags[$item->getId()] = $item->getTag()->getName();
+        }
+        $client = new Client();
+        $api = $this->getApi($env, Push::API_QA);
+        $logTool->addInfo("推送站点：$api");
+        foreach ( $grabData as $item ){
+            try{
+                $logTool->addInfo("开始推送问答数据GrabData:{$item->getId()}-GrabRule:{$item->getGrabRule()->getEntity()}:{$item->getGrabRule()->getEntityId()}");
+                $request = $this->setPushQaBody($item, $tags);
+
+                $crawler = $client->request("POST",$api, $request);
+                $res = $crawler->filter("body")->text();
+                $this->pushCallBack($item, $res);
+                $i++;
+            }catch (\Exception $e){
+                $logTool->addWarning($e->getMessage());
+            }
+        }
+        $logTool->addInfo("tenderAction方法执行完成<<<推送问答抓取数据结束");
+
+        $res = ["res"=>$i];
+        if(strtolower(php_sapi_name()) === 'cli'){
+            return $res;
+        }
+        return new JsonResponse($res);
     }
 
     protected function thisTime(){

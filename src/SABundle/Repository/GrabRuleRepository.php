@@ -1,6 +1,7 @@
 <?php
 
 namespace SABundle\Repository;
+use ReportBundle\Entity\Report;
 use SABundle\Entity\GrabRule;
 
 /**
@@ -11,6 +12,7 @@ use SABundle\Entity\GrabRule;
  */
 class GrabRuleRepository extends \Doctrine\ORM\EntityRepository
 {
+
     public function findGrabDatasForSendMail($criteria){
         $params = [];
         $dql = "SELECT gr, gl, gd, SUM(gl.count) 
@@ -57,4 +59,5 @@ class GrabRuleRepository extends \Doctrine\ORM\EntityRepository
         }
         return $ids;
     }
+
 }

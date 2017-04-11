@@ -9,7 +9,7 @@ use Goutte\Client as BaseClient;
 class Client extends BaseClient
 {
     private $confCURL = [
-        //'timeout' => 300,
+        'timeout' => 120,
         'headers' => [
             'User-Agent' =>  'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
             'Accept'     =>  'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -28,7 +28,11 @@ class Client extends BaseClient
 
     public function setCookie($cookieString){
         if($cookieString){
-            $this->getCookieJar()->set(Cookie::fromString($cookieString));
+            $cookies = explode(";", $cookieString);
+            foreach ($cookies as $cookie){
+                $this->getCookieJar()->set(Cookie::fromString(trim($cookie)));
+            }
+            $this->confCURL["headers"]["Cookie"] = $cookieString;
         }
         return $this;
     }
@@ -37,6 +41,11 @@ class Client extends BaseClient
         $this->setCURL($parameters);
         $guzzleClient = new \GuzzleHttp\Client($this->confCURL);
         $this->setClient($guzzleClient);
+        return $this;
+    }
+
+    public function setHeaders($name, $val){
+        $this->confCURL["headers"][$name] = $val;
         return $this;
     }
 }

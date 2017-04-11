@@ -1,7 +1,10 @@
 <?php
 
 namespace SABundle\Repository;
+use ReportBundle\Entity\Channel;
+use ReportBundle\Entity\Report;
 use SABundle\Entity\GrabRule;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * GrabDataRepository
@@ -16,5 +19,24 @@ class GrabDataRepository extends \Doctrine\ORM\EntityRepository
             "grabRuleId" => $grabRule->getId(),
         ],["id"=>"DESC"],$limit>=5 ? 5 : $limit);
         return $latest;
+    }
+
+    public function findReportData(Report $lastReport=null){
+        $params = [];
+        $dql = "SELECT gr, gd
+                FROM SABundle:GrabData AS gd 
+                JOIN gd.grabRule AS gr 
+                WHERE 1=1 ";
+        $dql .= "AND gr.entity = :channel";
+        $params["channel"] = Channel::LOGIC_NAME;
+        if($lastReport){
+            $dql .= " AND gd.createDate > :gdCreateDate ";
+            $params["gdCreateDate"] = $lastReport->getGetAt()->format("Y-m-d");
+        }
+
+        return $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameters($params)
+            ->getResult();
     }
 }

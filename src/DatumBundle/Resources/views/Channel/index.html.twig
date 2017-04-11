@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Channel list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for channel in channels %}
+            <tr>
+                <td><a href="{{ path('admin_datum_channel_show', { 'id': channel.id }) }}">{{ channel.id }}</a></td>
+                <td>{{ channel.name }}</td>
+                <td>{{ channel.url }}</td>
+                <td>{% if channel.status %}Yes{% else %}No{% endif %}</td>
+                <td>{{ channel.data }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('admin_datum_channel_show', { 'id': channel.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('datum_set_grab_rule', { 'id': channel.id }) }}">设置抓取规则</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_datum_channel_edit', { 'id': channel.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_datum_channel_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

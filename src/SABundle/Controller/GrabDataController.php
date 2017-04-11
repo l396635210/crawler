@@ -24,6 +24,8 @@ use SABundle\Form\GrabDataType;
 class GrabDataController extends Controller
 {
 
+    private $output;
+
     private $logTool;
     private $grabDatas = [];
     private $grabLog;
@@ -170,7 +172,8 @@ class GrabDataController extends Controller
 
         $this->logTool = new LogTool('applog',$this->get('kernel')->getRootDir(), 'grab-data');
         $this->logTool->addInfo("进入GrabData:grabAction方法》》》》：");
-        #set_time_limit(60000);
+        $this->output = $request->query->get("output");
+        set_time_limit(60000);
         $em = $this->getDoctrine()->getManager();
         $grabRules = $em->getRepository(GrabRule::class)->findBy($this->grabCriteria($request));
 
@@ -185,13 +188,12 @@ class GrabDataController extends Controller
         $res = [];
         $em = $this->getDoctrine()->getManager();
         foreach ($grabRules as $grabRule){
-            //try{
+            try{
                 /*
                 if(rand(2,5)==5){
                     continue;
                 }
                 */
-                $this->noNew = false;
                 $latest = $em->getRepository(GrabData::class)
                     ->getLatestGrabData($grabRule);
                 $this->grabLog = $em->getRepository(GrabLog::class)
@@ -199,23 +201,25 @@ class GrabDataController extends Controller
                 $this->logTool->addInfo("开始抓取{$grabRule->getEntity()}:{$grabRule->getEntityId()}");
                 $urls = $grabRule->getUrlsArr();
                 foreach ($urls as $url){
-                    //sleep(rand(2,7));
-                    $pageData = $this->getAllPageData($url, $grabRule->getData(), $grabRule->getPrefix(), $latest);
+                    sleep(rand(2,5));
+                    $pageData = $this->getAllPageData($url, $grabRule->getData(),
+                        $grabRule->getPrefix(), $latest, $grabRule->getCookies());
                     $this->setInsertGrabDatas($pageData,$grabRule);
                     if($this->noNew){
+                        $this->noNew = false;
                         break;
                     }
                 }
                 $this->insertGrabDatas();
-/*
+
             }catch (\Exception $e){
-                $this->logTool->addWarning("抓取{$grabRule->getEntity()}:{$grabRule->getEntityId()}失败");
+                $this->logTool->addWarning("抓取{$grabRule->getEntity()}:{$grabRule->getEntityId()}失败：{$e->getMessage()}");
                 $em->persist($this->grabLog->setGrabLogException($e));
                 $em->flush();
                 $res[]["err"] = $e->getCode();
                 $res[]["msg"] = $e->getMessage();
             }
-*/
+
         }
 
         return $res;
@@ -238,12 +242,17 @@ class GrabDataController extends Controller
 
     private function setInsertGrabDatas(array $pageData, GrabRule $grabRule){
         foreach ($pageData as &$item){
-            $grabData = new GrabData();
-            $grabData->setGrabRule($grabRule);
-            $grabData->setData(\GuzzleHttp\json_encode($item));
-            $grabData->setCreateDate(new \DateTime());
-            $grabData->setCreateTime(new \DateTime());
-            $this->grabDatas[] = $grabData;
+            if($this->output){
+                file_put_contents($this->get('kernel')->getRootDir()."/logs/grab-data.log",\GuzzleHttp\json_encode($item)."\n", FILE_APPEND);
+            }
+            if(isset($item['title'])&& trim($item['title'])){
+                $grabData = new GrabData();
+                $grabData->setGrabRule($grabRule);
+                $grabData->setData(\GuzzleHttp\json_encode($item));
+                $grabData->setCreateDate(new \DateTime());
+                $grabData->setCreateTime(new \DateTime());
+                $this->grabDatas[] = $grabData;
+            }
         }
     }
 
@@ -265,17 +274,17 @@ class GrabDataController extends Controller
         $this->grabDatas = null;
     }
 
-    private function getAllPageData($url,$rule, $prefix, $latest=null){
+    private function getAllPageData($url,$rule, $prefix, $latest=null, $cookieString){
         $this->logTool->addInfo("抓取{$url}");
         if($prefix){
             $prefix = \GuzzleHttp\json_decode($prefix,true);
         }
         $topLevPageRule = $this->getRule(1, $rule);
-        $pageData = $this->getPageData($topLevPageRule, $url, $prefix, $latest);
+        $pageData = $this->getPageData($topLevPageRule, $url, $prefix, $latest, $cookieString);
 
         $Lev2PageRule = $this->getRule(2, $rule);
         if($Lev2PageRule){
-            $pageData = $this->joinLev2PageData($Lev2PageRule, $pageData, $prefix);
+            $pageData = $this->joinLev2PageData($Lev2PageRule, $pageData, $prefix, $cookieString);
         }
         return $pageData;
     }
@@ -284,11 +293,15 @@ class GrabDataController extends Controller
      * @Route("/test",name="sa_grabData_test")
      */
     public function testGrabAction(Request $request){
-        set_time_limit(6000);
+        //set_time_limit(6000);
+        $this->logTool = new LogTool('applog',$this->get('kernel')->getRootDir(), 'grab-data');
+        $this->logTool->addInfo("进入GrabData:testGrabAction》》》》：");
         $pageData = $this->getAllPageData(
             $this->getTestUrl($request->request->get("urls")),
             $request->request->get("rule"),
-            $request->request->get("prefix")
+            $request->request->get("prefix"),
+            null,
+            $request->request->get("cookies")
         );
         $response = new JsonResponse();
         $response->setData($pageData);
@@ -333,11 +346,23 @@ class GrabDataController extends Controller
 
     private function evalRule(Crawler $crawler, $rule){
 
+        if(strstr($rule, "remove")){
+            $rules = explode(";", $rule);
+            $rm = $rules[0].";";
+            unset($rules[0]);
+            $code = preg_replace("/remove\((\".*?\")\);/","\$crawler->filter($1)->each(function (\$crawler){
+                        foreach (\$crawler as \$node) {
+                            \$node->parentNode->removeChild(\$node);
+                        }
+                    });", $rm);
+            eval($code);
+            $rule = implode(";", $rules);
+        }
         if(strstr($rule, "->")){
             $rule = str_replace("$","filter",$rule);
             $rule = preg_replace("/reduce\((\d+),\s*(=|!)\)/","reduce(function (\$node, \$i) { return (\$i % $1) $2= 0; });", $rule);
-
             $node = eval('return $crawler->'.$rule.";");
+
         }else{
             $node = $crawler->filter($rule);
         }
@@ -379,7 +404,8 @@ class GrabDataController extends Controller
     }
     private function getPageData($pageRule, $url, $prefix="", $latest=null, $cookieString = null){
         $client = new Client();
-dump(trim($url));
+        #调试
+        #$cookieString = 'ASP.NET_SessionId=ybcj0vrawx52wzx0xlxatacd';
         $crawler = $client->setCookie($cookieString)
             ->setCURLParameters([])->request("GET",trim($url));
 
@@ -423,11 +449,11 @@ dump(trim($url));
         return $data;
     }
 
-    private function joinLev2PageData($lev2PageRule, $pageData, $prefix){
+    private function joinLev2PageData($lev2PageRule, $pageData, $prefix, $cookieString){
 
         foreach ($pageData as $key=>$item){
             if(isset($item[GrabFields::FIELD_LINK])){
-                $pageData[$key][] = $this->getPageData($lev2PageRule, $item[GrabFields::FIELD_LINK], $prefix);
+                $pageData[$key][] = $this->getPageData($lev2PageRule, $item[GrabFields::FIELD_LINK], $prefix, null, $cookieString);
             }
         }
         return $pageData;

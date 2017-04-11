@@ -42,13 +42,12 @@ class DefaultController extends Controller
         $list = $em->getRepository(GrabData::class)
             ->findBy([
                 "grabRuleId" => $grabRuleIds
-            ],["id"=>"DESC"],20);
+            ],["id"=>"DESC"],50);
 
         $qaList = $em->getRepository(QAList::class)
             ->findBy([
                 "id" => $entityIds
             ]);
-
         $tags = [];
         foreach ($qaList as $item){
             $tags[$item->getId()] = $item->getTag()->getName();
@@ -56,11 +55,13 @@ class DefaultController extends Controller
         foreach ($list as $item){
             $data = \GuzzleHttp\json_decode($item->getData(), true);
             $data["tag"] = $tags[$item->getGrabRule()->getEntityId()];
+            dump($data);
 
             $client = new Client();
-            $crawler = $client->request("POST","http://wenda.pecans.cn/index.php?qa=curl", $data);
-            #$res = $crawler->filter("body")->text();
-            #dump($res);
+            $crawler = $client->request("POST","http://wenda.pecans.cn/?qa=curl", $data);
+            dump($crawler);
+            //$res = $crawler->filter("body")->text();
+
         }
         die;
     }

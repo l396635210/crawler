@@ -33,7 +33,7 @@ class Channel
      */
     public static function getMyfArea($area)
     {
-        return isset(self::$myfAreas[$area]) ?  self::$myfAreas[$area] : $area;
+        return isset(self::$myfAreas[$area]) ?  self::$myfAreas[$area] : -1;
     }
 
     private static $myfCountries = [1=>86, 2=>87];

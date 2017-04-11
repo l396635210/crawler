@@ -1,0 +1,65 @@
+{% extends 'admin.html.twig' %}
+{% block title %}招标-国家管理{% endblock %}
+
+{% block body %}
+    <h2 class="sub-header">国家管理</h2>
+    <form class="form-box" onsubmit="false" >
+        <label for="area">选择地区</label>
+        <select class="form-control" id="area">
+            <option value="">全部</option>
+            {% for area in areaList %}
+            <option value="{{ area.id }}">{{ area.areaName }}</option>
+            {% endfor %}
+        </select>
+        <a role="button" href="{{ path('country_create') }}" class="btn btn-primary form-group">创建一个新的国家</a>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>地区名称</th>
+                <th>国家名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in list %}
+            <tr class="country_tr" data-area="{{ item.getArea.id }}">
+                <td>{{ item.id }}</td>
+                <td>{{ item.getArea.areaName }}</td>
+                <td>{{ item.countryName }}</td>
+                <td>
+                    <a href="{{ path('country_edit', {'id':item.id}) }}" class="btn btn-info">修改</a>
+                    <button class="btn btn-danger">删除</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a role="button" href="{{ path('country_create') }}" class="btn btn-lg btn-primary">创建一个新的国家</a>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    (function(){
+        $("#area").change(function(){
+            queryCountryByArea($(this).val());
+        });
+        function queryCountryByArea(id){
+            $(".country_tr").each(function(){
+                if(!id){
+                    $(this).show();
+                    return;
+                }
+                if($(this).data("area")==id){
+                    $(this).show();
+                }else {
+                    $(this).hide();
+                }
+            });
+        }
+    })()
+</script>
+{% endblock %}

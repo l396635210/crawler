@@ -5,4 +5,4 @@ services:
     sa.grab_rule:
         class: SABundle\Controller\GrabRuleController
         calls:
-            - [ setContainer, [ @service_container ] ]
+            - [ setContainer, [ "@service_container" ] ]

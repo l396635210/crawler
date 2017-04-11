@@ -25,7 +25,7 @@ class CategoryController extends Controller
 
         // replace this example code with whatever you need
         return $this->render('category/list.html.twig', array(
-            'active' => $request->get('_route'),
+            'active' => 'app_category',
             'list'   => $list,
             'title'  => '分类管理'
         ));
@@ -57,7 +57,7 @@ class CategoryController extends Controller
         }
         // replace this example code with whatever you need
         return $this->render('category/create.html.twig', array(
-            'active' => $request->get('_route'),
+            'active' => 'app_category',
             'form'   => $form->createView(),
             'action' => 'Create',
             'title'  => '创建分类',
@@ -90,7 +90,7 @@ class CategoryController extends Controller
         }
         // replace this example code with whatever you need
         return $this->render('category/create.html.twig', array(
-            'active' => $request->get('_route'),
+            'active' => 'app_category',
             'action' => 'Edit',
             'form'   => $form->createView(),
             'title'  => '修改地址',

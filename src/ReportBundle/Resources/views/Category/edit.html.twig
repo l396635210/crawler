@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Category edit</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        <input class="btn btn-primary" style="margin: 10px;" type="submit" value="Edit" />
+    {{ form_end(edit_form) }}
+
+    <ul class="list-inline ">
+        <li>
+            <a class="btn btn-link" href="{{ path('admin_report_category_index') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input class="btn btn-danger" type="button" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(".btn-danger").click(function(){
+        $(this).confirmation('show');
+        $(".popover-content").find(".btn-danger").attr("href", $(this).attr('href'));
+    });
+</script>
+{% endblock %}

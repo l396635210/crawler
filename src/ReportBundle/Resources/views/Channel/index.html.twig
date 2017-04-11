@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Channel list</h1>
+    <ul class="list-unstyled">
+        <li>
+            <a class="btn btn-primary" href="{{ path('admin_report_channel_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for channel in channels %}
+            <tr>
+                <td><a href="{{ path('admin_report_channel_show', { 'id': channel.id }) }}">{{ channel.id }}</a></td>
+                <td>{{ channel.name }}</td>
+                <td><a target="_blank" href="{{ channel.url }}">{{ channel.url }}</a></td>
+                <td>
+                    <ul class="list-unstyled list-inline">
+                        <li>
+                            <a class="btn btn-info btn-sm " href="{{ path('admin_report_channel_show', { 'id': channel.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('report_set_grab_rule', {'id':channel.id}) }}" class="btn btn-sm btn-warning">Set</a>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-sm " href="{{ path('admin_report_channel_edit', { 'id': channel.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul class="list-unstyled">
+        <li>
+            <a class="btn btn-primary" href="{{ path('admin_report_channel_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

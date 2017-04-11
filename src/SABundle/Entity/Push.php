@@ -14,9 +14,10 @@ use ZhanhuiBundle\Entity\Channel;
 
 class Push
 {
-    const API_TENDER = "tender";
-    const API_POST   = "post";
+    const API_TENDER    = "tender";
+    const API_POST      = "post";
     const API_ZHANHUI   = "zhanhui";
+    const API_QA        = "qa";
 
     const SALT_TENDER = "Oil.Tender";
     const SALT_POST   = "Oil.Art";
@@ -41,6 +42,10 @@ class Push
         "zhanhui" => [
             "prod" => "http://oilsns.com/api.php",
             "dev"  => "http://wp.pecans.cn/api.php",
+        ],
+        "qa" => [
+            "prod" => "http://wenda.pecans.cn/index.php?qa=curl",
+            "dev"  => "http://wenda.pecans.cn/index.php?qa=curl",
         ],
     ];
 
@@ -123,6 +128,13 @@ class Push
         );
         ksort($data);
         return $data;
+    }
+
+    public static function getQaData(GrabData $grabData, $tags){
+        $data = \GuzzleHttp\json_decode($grabData->getData(), true);
+        $data["tag"] = $tags[$grabData->getGrabRule()->getEntityId()];
+        ksort($data);
+        return$data;
     }
 
     public static function setToken($data, $salt){

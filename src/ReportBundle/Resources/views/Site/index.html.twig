@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Site list</h1>
+
+    <ul class="list-unstyled list-inline">
+        <li>
+            <a class="btn btn-primary" href="{{ path('admin_report_site_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for site in sites %}
+            <tr>
+                <td><a href="{{ path('admin_report_site_show', { 'id': site.id }) }}">{{ site.id }}</a></td>
+                <td>{{ site.name }}</td>
+                <td><a href="{{ site.url }}" target="_blank">{{ site.url }}</a></td>
+                <td>
+                    <ul class="list-unstyled list-inline btn-group">
+                        <li>
+                            <a class="btn btn-info" href="{{ path('admin_report_site_show', { 'id': site.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary" href="{{ path('admin_report_site_edit', { 'id': site.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul class="list-unstyled list-inline">
+        <li>
+            <a class="btn btn-primary" href="{{ path('admin_report_site_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

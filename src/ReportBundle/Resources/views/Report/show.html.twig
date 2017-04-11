@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ report.title }}</h1>
+    <div class="blog-post">
+        <h2 class="blog-post-title"></h2>
+        <p class="blog-post-meta">
+            <a href="{{ report.link }}" target="_blank">{{ report.link }}</a>
+        </p>
+        <p class="blog-post-meta">
+            抓取日期：{% if report.getAt %}{{ report.getAt|date('Y-m-d') }}{% endif %}
+            by
+            {{ report.channel }}
+        </p>
+        <blockquote>
+            {{ report.content }}
+        </blockquote>
+    </div>
+    <ul class="list-unstyled list-inline">
+        <li>
+            <a class="btn btn-link" href="{{ path('admin_report_report_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

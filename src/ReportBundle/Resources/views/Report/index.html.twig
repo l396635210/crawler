@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/pagination.css') }}">
+{% endblock %}
+{% block body %}
+    <h1>Report list</h1>
+    <div class="row">
+        <form action="{{ path('admin_report_report_generate') }}" method="post">
+            <div class="col-md-3">
+                <input type="submit" id="report-generate" data-click="loading..." class="btn btn-primary" value="生成报告" />
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        {{ form_start(condition_form) }}
+            <div class="col-sm-4">
+                {{ form_row(condition_form.category) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(condition_form.site) }}
+            </div>
+            <div class="col-sm-4">
+                <input class="btn btn-info btn-lg" type="submit" value="Search">
+            </div>
+        {{ form_end(condition_form) }}
+    </div>
+    <div class="blog-main">
+        <div class="row">
+            <p class="col-md-12">共{{ reports.getTotalItemCount }}条数据</p>
+        </div>
+        {% for report in reports %}
+        <div class="blog-post">
+            <h2 class="blog-post-title"><a href="{{ report.link }}" target="_blank">{{ report.title | slice(0, 50) }}...</a></h2>
+            <p class="blog-post-meta">
+                抓取日期：{% if report.getAt %}{{ report.getAt|date('Y-m-d') }}{% endif %}
+                by
+                {{ report.channel }}
+            </p>
+            <blockquote>
+                {{ report.content | slice(0,300) }}...
+                <ul class="list-unstyled list-inline">
+                    <li>
+                        <a class="btn btn-info" href="{{ path('admin_report_report_show', { 'id': report.id }) }}">show</a>
+                    </li>
+                </ul>
+            </blockquote>
+        </div>
+        <hr>
+        {% endfor %}
+
+        <div class="navigation">
+            {{ knp_pagination_render(reports) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#report-generate').click(function () {
+            $(this).val($(this).data("click"));
+            $(this).attr("disabled","disabled");
+        });
+    </script>
+{% endblock %}

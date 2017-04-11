@@ -103,7 +103,8 @@ class DefaultController extends Controller
     {
         $data = [];
         if(strtolower(php_sapi_name()) === 'cli' && $command = $request->request->get("command")) {
-
+            $fs = new Filesystem();
+            $fs->chown($this->getParameter('kernel.cache_dir'), 48, true);
             $logTool = new LogTool('applog', $this->get('kernel')->getRootDir());
             $logTool->addInfo("开始执行定时任务>>>".date("Y-m-d H:i:s"));
             $command = $request->request->get("command");
@@ -115,12 +116,72 @@ class DefaultController extends Controller
 
             $logTool->addInfo("执行定时任务完成>>>".date("Y-m-d H:i:s"));
 
-            $fs = new Filesystem();
             $fs->chown($this->getParameter('kernel.cache_dir'), 48, true);
             return new JsonResponse($data);
         }
-        return $this->render('default/admin.html.twig', array(
-            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
-        ));
+        if($this->getUser()){
+            return $this->render('default/admin.html.twig', array(
+                'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
+            ));
+        }else{
+            return $this->redirectToRoute("fos_user_security_login");
+        }
+
+    }
+
+    /**
+     * @Route("/test/{id}", name="test")
+     * @Method({"GET","POST"});
+     */
+    public function testAction(Request $request, $id){
+        $body = file_get_contents($this->getParameter('kernel.root_dir')."/Resources/data/local/grab-data".$id.".log");
+        $arr = (explode("}{", $body));
+        echo "<table>";
+        echo "<thead>";
+        echo "<th>Name</th><th>Category</th><th>Phone</th><th>Website</th>";
+        echo "<th>Email</th><th>Manager</th><th>Activities</th>";
+        echo "<th>Province</th><th>City</th><th>Address</th>";
+        echo "<th>Country</th><th>Fax</th><th>Tender</th>";
+        echo "</thead>";
+        echo "<tbody>";
+        foreach ($arr as $key=>$str){
+
+                $item = "{".$str."}";
+            $company = (\GuzzleHttp\json_decode($item, true));
+            $details = $company[0]["address"];
+            $details = str_replace(
+                ["Managing Director:", "Activities:", "Province:", "City:", "Address:"],
+                ["oilsns",              "oilsns",       "oilsns",  "oilsns", "oilsns"],
+                $details);
+            $details = explode("oilsns", $details);
+
+            if(isset($details[5])){
+                $manager = $details[1];
+                $activities = $details[2];
+                $province = $details[3];
+                $city = $details[4];
+                $address = $details[5];
+            }
+
+
+            echo "<tr>";
+            echo "<td>".$company["title"]."</td>";
+            echo "<td>".$company[0]["category"]."</td>";
+            echo "<td>".$company[0]["info_source"]."</td>";
+            echo "<td>".$company[0]["content1"]."</td>";
+            echo "<td>".$company[0]["content2"]."</td>";
+            echo "<td>".(isset($manager) ? $manager : "")."</td>";
+            echo "<td>".(isset($activities) ? $activities : "")."</td>";
+            echo "<td>".(isset($province) ? $province : "")."</td>";
+            echo "<td>".(isset($city) ? $city : "")."</td>";
+            echo "<td>".(isset($address) ? $address : "")."</td>";
+            echo "<td>".$company[0]["text_spare"]."</td>";
+            echo "<td>".$company[0]["text_spare_1"]."</td>";
+            echo "<td>".(isset($company[0]["tender-code"]) ? $company[0]["tender-code"] : "")."</td>";
+            echo "</tr>";
+        }
+        echo "</tbody>";
+        echo "</table>";
+        die;
     }
 }

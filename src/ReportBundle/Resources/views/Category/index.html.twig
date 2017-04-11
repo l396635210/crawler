@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Category list</h1>
+    <ul>
+        <li>
+            <a href="{{ path('admin_report_category_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Parent</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            <tr>
+                <td><a href="{{ path('admin_report_category_show', { 'id': category.id }) }}">{{ category.id }}</a></td>
+                <td>{{ category.parent }}</td>
+                <td>{{ category.name }}</td>
+                <td>
+                    <ul class="btn-group list-inline ">
+                        <li>
+                            <a class="btn btn-link" href="{{ path('admin_report_category_show', { 'id': category.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a class="btn btn-info" href="{{ path('admin_report_category_edit', { 'id': category.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_report_category_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}
