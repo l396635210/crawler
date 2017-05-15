@@ -49,6 +49,12 @@ class Site
     private $url;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="can_grab", type="boolean")
+     */
+    private $canGrab;
+
+    /**
      * Get id
      *
      * @return int
@@ -111,6 +117,7 @@ class Site
     public function __construct()
     {
         $this->channels = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->canGrab = true;
     }
 
     /**
@@ -145,5 +152,29 @@ class Site
     public function getChannels()
     {
         return $this->channels;
+    }
+
+    /**
+     * Set canGrab
+     *
+     * @param boolean $canGrab
+     *
+     * @return Site
+     */
+    public function setCanGrab($canGrab)
+    {
+        $this->canGrab = $canGrab;
+
+        return $this;
+    }
+
+    /**
+     * Get canGrab
+     *
+     * @return boolean
+     */
+    public function getCanGrab()
+    {
+        return $this->canGrab;
     }
 }

@@ -26,7 +26,9 @@ class SiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $sites = $em->getRepository('ReportBundle:Site')->findAll();
+        $sites = $em->getRepository('ReportBundle:Site')->findBy([
+            "canGrab" => true,
+        ]);
 
         return $this->render('ReportBundle:Site:index.html.twig', array(
             'sites' => $sites,

@@ -28,6 +28,14 @@ class ReportRepository extends \Doctrine\ORM\EntityRepository
             $dql .= " AND cn.site = :cnSite ";
             $this->params["cnSite"] = $criteria["cnSite"];
         }
+        if( isset($criteria["rPostStart"]) && $criteria["rPostStart"] ){
+            $dql .= " AND r.postAt >= :rPostStart ";
+            $this->params["rPostStart"] = $criteria["rPostStart"];
+        }
+        if( isset($criteria["rPostEnd"]) && $criteria["rPostEnd"] ){
+            $dql .= " AND r.postAt <= :rPostEnd ";
+            $this->params["rPostEnd"] = $criteria["rPostEnd"];
+        }
         $dql .= "ORDER BY ";
         if($orderBy){
             foreach ($orderBy as $key=>$value){
@@ -35,7 +43,7 @@ class ReportRepository extends \Doctrine\ORM\EntityRepository
             }
             $dql = substr($dql, 0, -1);
         }else{
-            $dql .= "r.id DESC";
+            $dql .= "r.id DESC, r.title ASC";
         }
         return $dql;
     }

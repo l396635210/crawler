@@ -18,7 +18,24 @@
     </div>
     <ul class="list-unstyled list-inline">
         <li>
-            <a class="btn btn-link" href="{{ path('admin_report_report_index') }}">Back to the list</a>
+            <a class="btn btn-link back-link" href="{{ path('admin_report_report_index') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+            <input class="btn btn-danger" type="submit" value="Delete">
+            {{ form_end(delete_form) }}
         </li>
     </ul>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(".back-link").click(function (e) {
+            e.preventDefault();
+            if(!document.referrer){
+                location.href = $(this).attr("href");
+            }else{
+                history.back();
+            }
+        });
+    </script>
 {% endblock %}

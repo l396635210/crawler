@@ -142,6 +142,7 @@ class MailController extends Controller
                 $this->mailBody .= $this->setMailBody_h2($sites[0]->getCategory()->getName()) . $text;
             }
         }
+
     }
 
     protected function setPostMailText($sites, $empSites){

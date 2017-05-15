@@ -49,6 +49,12 @@ class Site
     private $url;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="can_grab", type="boolean")
+     */
+    private $canGrab;
+
+    /**
      * Get id
      *
      * @return int

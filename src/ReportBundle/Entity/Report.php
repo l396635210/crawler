@@ -39,7 +39,7 @@ class Report
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="content", type="text", nullable=true)
      */
     private $content;
 
@@ -57,6 +57,11 @@ class Report
      */
     private $getAt;
 
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="post_at", type="date", nullable=true)
+     */
+    private $postAt;
 
     /**
      * Get id
@@ -189,5 +194,55 @@ class Report
     public function getChannel()
     {
         return $this->channel;
+    }
+
+    /**
+     * Set postAt
+     *
+     * @param \DateTime $postAt
+     *
+     * @return Report
+     */
+    public function setPostAt($postAt)
+    {
+        $this->postAt = $postAt;
+
+        return $this;
+    }
+
+    /**
+     * Get postAt
+     *
+     * @return \DateTime
+     */
+    public function getPostAt()
+    {
+        return $this->postAt;
+    }
+
+    /**
+     * @param string $grabDateTime
+     */
+    public function filterPostAt($grabDateTime){
+
+        if(strstr($this->channel->getName(),"rigzone-news") && strstr($grabDateTime, "|")){
+            $grabDateTime = substr($grabDateTime, strripos($grabDateTime, "|")+1 );
+        }else if(strstr($this->channel->getName(),"OilVoice")){
+            $grabDateTime = substr($grabDateTime, stripos($grabDateTime, ",") );
+        }else if(strstr($this->channel->getName(),"energyvoice-oiland")){
+            $grabDateTime = str_replace("/","-",$grabDateTime);
+        }else if( strstr($this->channel->getName(),"OilPro-TODAY'S") ){
+            $grabDateTime = str_replace("one","1", strtolower($grabDateTime));
+        }else if( strstr($this->channel->getName(), "Pesa-News") ){
+            $grabDateTime = str_replace("/","-",$grabDateTime);
+        }else if( strstr($this->content->getName(), "subsea world news")){
+            $grabDateTime = substr($grabDateTime, stripos($grabDateTime,"on")+3, strripos($grabDateTime, " with")-10);
+        }else if( strstr($this->content->getName(), "offshore energy today")){
+            $grabDateTime = substr($grabDateTime, stripos($grabDateTime,"on")+3, strripos($grabDateTime, " with")-10);
+        }else if( strstr($this->content->getName(), "E&P")){
+            $grabDateTime = str_replace("-","",$grabDateTime);
+        }
+
+        return new \DateTime($grabDateTime);
     }
 }

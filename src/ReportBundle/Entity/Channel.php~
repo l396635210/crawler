@@ -4,6 +4,7 @@ namespace ReportBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Channel
@@ -57,7 +58,6 @@ class Channel
 
     /**
      * @var string
-     *
      * @ORM\Column(name="url", type="string", length=255)
      */
     private $url;
@@ -166,5 +166,46 @@ class Channel
     public function getSite()
     {
         return $this->site;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add report
+     *
+     * @param \ReportBundle\Entity\Report $report
+     *
+     * @return Channel
+     */
+    public function addReport(\ReportBundle\Entity\Report $report)
+    {
+        $this->reports[] = $report;
+
+        return $this;
+    }
+
+    /**
+     * Remove report
+     *
+     * @param \ReportBundle\Entity\Report $report
+     */
+    public function removeReport(\ReportBundle\Entity\Report $report)
+    {
+        $this->reports->removeElement($report);
+    }
+
+    /**
+     * Get reports
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getReports()
+    {
+        return $this->reports;
     }
 }

@@ -1,0 +1,17 @@
+{{ form_start(condition_form) }}
+<div class="col-sm-3">
+    {{ form_row(condition_form.category) }}
+</div>
+<div class="col-sm-3">
+    {{ form_row(condition_form.site) }}
+</div>
+<div class="col-sm-2">
+    {{ form_row(condition_form.postStart) }}
+</div>
+<div class="col-sm-2">
+    {{ form_row(condition_form.postEnd) }}
+</div>
+<div class="col-sm-2">
+    <input class="btn btn-info btn-lg" type="submit" value="Search">
+</div>
+{{ form_end(condition_form) }}

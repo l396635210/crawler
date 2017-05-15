@@ -130,58 +130,12 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/test/{id}", name="test")
+     * @Route("/test", name="test")
      * @Method({"GET","POST"});
      */
-    public function testAction(Request $request, $id){
-        $body = file_get_contents($this->getParameter('kernel.root_dir')."/Resources/data/local/grab-data".$id.".log");
-        $arr = (explode("}{", $body));
-        echo "<table>";
-        echo "<thead>";
-        echo "<th>Name</th><th>Category</th><th>Phone</th><th>Website</th>";
-        echo "<th>Email</th><th>Manager</th><th>Activities</th>";
-        echo "<th>Province</th><th>City</th><th>Address</th>";
-        echo "<th>Country</th><th>Fax</th><th>Tender</th>";
-        echo "</thead>";
-        echo "<tbody>";
-        foreach ($arr as $key=>$str){
-
-                $item = "{".$str."}";
-            $company = (\GuzzleHttp\json_decode($item, true));
-            $details = $company[0]["address"];
-            $details = str_replace(
-                ["Managing Director:", "Activities:", "Province:", "City:", "Address:"],
-                ["oilsns",              "oilsns",       "oilsns",  "oilsns", "oilsns"],
-                $details);
-            $details = explode("oilsns", $details);
-
-            if(isset($details[5])){
-                $manager = $details[1];
-                $activities = $details[2];
-                $province = $details[3];
-                $city = $details[4];
-                $address = $details[5];
-            }
-
-
-            echo "<tr>";
-            echo "<td>".$company["title"]."</td>";
-            echo "<td>".$company[0]["category"]."</td>";
-            echo "<td>".$company[0]["info_source"]."</td>";
-            echo "<td>".$company[0]["content1"]."</td>";
-            echo "<td>".$company[0]["content2"]."</td>";
-            echo "<td>".(isset($manager) ? $manager : "")."</td>";
-            echo "<td>".(isset($activities) ? $activities : "")."</td>";
-            echo "<td>".(isset($province) ? $province : "")."</td>";
-            echo "<td>".(isset($city) ? $city : "")."</td>";
-            echo "<td>".(isset($address) ? $address : "")."</td>";
-            echo "<td>".$company[0]["text_spare"]."</td>";
-            echo "<td>".$company[0]["text_spare_1"]."</td>";
-            echo "<td>".(isset($company[0]["tender-code"]) ? $company[0]["tender-code"] : "")."</td>";
-            echo "</tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
+    public function testAction(Request $request){
+        $datetime = new \DateTime("Tuesday, Dec 06, 2016");
+        dump($datetime);
         die;
     }
 }
